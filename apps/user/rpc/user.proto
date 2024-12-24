@@ -1,3 +1,39 @@
 syntax = "proto3";
 
-package template;
+package pb;
+
+option go_package = "./pb";
+
+message User{
+  string NickName = 1;
+  string Tel = 2;
+  uint32 Level = 3;
+  uint64 Uid = 4;
+}
+
+message SignInReq{
+  string Tel = 1;
+  string Pass = 2;
+  string Code = 3;
+}
+
+message SignInResp{
+  User user = 1;
+}
+
+message SignUpReq{
+  string Tel = 1;
+  string Code = 2;
+  string NickName = 3;
+  string Pass = 4;
+  uint32 Level = 5;
+}
+
+message SignUpResp{
+  User user = 1;
+}
+
+service UserRpc{
+  rpc SignIn(SignInReq) returns(SignInResp);
+  rpc SignUp(SignUpReq) returns(SignUpResp);
+}
