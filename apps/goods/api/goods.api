@@ -1,9 +1,46 @@
 syntax = "v1"
 
-info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+info (
+	title:   "goods api"
+	desc:    "goods api file"
+	author:  "dcz"
+	email:   "chaozhengding@hust.edu.cn"
+	version: "v1"
 )
+
+type Goods {
+	GoodsId uint64 `json:"goods_id"`
+	Sku     string `json:"sku"`
+	Name    string `json:"name"`
+}
+
+type (
+	RegistryGoodsReq {
+		Sku  string `form:"sku"`
+		Name string `form:"name"`
+	}
+	RegistryGoodsResp {
+		Goods
+	}
+	GoodsInfoReq {
+		Sku string `path:"sku"`
+	}
+	GoodsInfoResp {
+		Goods
+	}
+)
+
+@server (
+	jwt:    auth
+	prefix: /api/v1/goods
+)
+service goods-api {
+	@doc "注册商品"
+	@handler RegistryGoods
+	post /registry (RegistryGoodsReq) returns (RegistryGoodsResp)
+
+	@doc "获取商品元信息"
+	@handler GoodsInfo
+	get /info/:sku (GoodsInfoReq) returns (GoodsInfoResp)
+}
+
