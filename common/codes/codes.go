@@ -21,3 +21,9 @@ const (
 	TelNotRegistry
 	PassWordError
 )
+
+// for goods
+const (
+	SkuAlreadyExists Code = 30000 + iota
+	SkuNotRegistry
+)

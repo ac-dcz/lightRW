@@ -1,3 +1,33 @@
 syntax = "proto3";
 
-package template;
+package pb;
+
+option go_package = "./pb";
+
+message Goods{
+  uint64 GoodsId = 1;
+  string Sku = 2;
+  string Name = 3;
+}
+
+message RegistryGoodsReq{
+  string Sku = 1;
+  string Name = 2;
+}
+
+message RegistryGoodsResp{
+  Goods goods = 1;
+}
+
+message GoodsInfoReq{
+  string Sku = 1;
+}
+
+message GoodsInfoResp{
+  Goods goods = 1;
+}
+
+service GoodsRpc {
+  rpc RegistryGoods(RegistryGoodsReq) returns(RegistryGoodsResp);
+  rpc GoodsInfo(GoodsInfoReq) returns(GoodsInfoResp);
+}
