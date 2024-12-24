@@ -1,0 +1,12 @@
+Name: code.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: code.rpc
+
+CodeLen: 6
+
+BizRdsConf:
+  Host: 127.0.0.1:6379
+  Type: node

@@ -1,3 +1,27 @@
 syntax = "proto3";
 
-package template;
+package pb;
+
+option go_package = "./pb";
+
+message GenCodeReq{
+  string tel = 1;
+}
+
+message GenCodeResp{
+  string code = 1;
+}
+
+message VerifyCodeReq{
+  string tel = 1;
+  string code = 2;
+}
+
+message VerifyCodeResp{
+  bool success = 1;
+}
+
+service VerifyCode{
+  rpc GenCode(GenCodeReq) returns(GenCodeResp);
+  rpc VerifyCode(VerifyCodeReq) returns(VerifyCodeResp);
+}
