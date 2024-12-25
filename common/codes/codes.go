@@ -10,6 +10,7 @@ const (
 	NotFoundMetaData    Code = 101
 	InvalidToken        Code = 102
 	InvalidTokenPayLoad Code = 103
+	BuildTokenError     Code = 104
 )
 
 // for verify code

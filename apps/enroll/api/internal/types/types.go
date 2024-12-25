@@ -11,6 +11,7 @@ type SignInReq struct {
 
 type SignInResp struct {
 	User
+	Token string `json:"token"`
 }
 
 type SignUpReq struct {

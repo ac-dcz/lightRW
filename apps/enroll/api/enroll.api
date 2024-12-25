@@ -22,6 +22,7 @@ type (
 	}
 	SignInResp {
 		User
+		Token string `json:"token"`
 	}
 	SignUpReq {
 		Tel      string `json:"tel" validate:"required"`
