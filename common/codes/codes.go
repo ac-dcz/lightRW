@@ -3,9 +3,13 @@ package codes
 type Code uint32
 
 const (
-	Ok            Code = 200
-	InternalError Code = 500
-	UnKnown       Code = 400
+	Ok                  Code = 200
+	InternalError       Code = 500
+	UnKnown             Code = 400
+	InvalidParams       Code = 100
+	NotFoundMetaData    Code = 101
+	InvalidToken        Code = 102
+	InvalidTokenPayLoad Code = 103
 )
 
 // for verify code

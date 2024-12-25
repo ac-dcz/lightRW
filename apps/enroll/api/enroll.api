@@ -1,54 +1,48 @@
 syntax = "v1"
 
-info(
-    title: "enroll api"
-    desc: "enroll api file"
-    author: "dcz"
-    email: "chaozhengding@hust.edu.cn"
-    version: "v1"
+info (
+	title:   "enroll api"
+	desc:    "enroll api file"
+	author:  "dcz"
+	email:   "chaozhengding@hust.edu.cn"
+	version: "v1"
 )
 
-type(
-
-    User{
-        NickName string `json:"nick_name"`
-        Tel string `json:"tel"`
-        Level uint32 `json:"level"`
-        Uid uint64 `json:"uid"`
-    }
-
-    SignInReq{
-        Tel string `json:"tel"`
-        Pass string `json:"pass"`
-        Code string `json:"code"`
-    }
-
-    SignInResp{
-        User
-    }
-
-    SignUpReq{
-        Tel string `json:"tel"`
-        Code string `json:"code"`
-        NickName string `json:"nick_name"`
-        Pass string `json:"pass"`
-        Level uint32 `json:"level"`
-    }
-
-    SignUpResp{
-        User
-    }
+type (
+	User {
+		NickName string `json:"nick_name" validate:"required"`
+		Tel      string `json:"tel" validate:"required"`
+		Level    uint32 `json:"level" validate:"required"`
+		Uid      uint64 `json:"uid" validate:"required"`
+	}
+	SignInReq {
+		Tel  string `json:"tel" validate:"required"`
+		Pass string `json:"pass" validate:"required"`
+		Code string `json:"code"`
+	}
+	SignInResp {
+		User
+	}
+	SignUpReq {
+		Tel      string `json:"tel" validate:"required"`
+		Code     string `json:"code" validate:"required"`
+		NickName string `json:"nick_name" validate:"required"`
+		Pass     string `json:"pass" validate:"required"`
+		Level    uint32 `json:"level" validate:"required"`
+	}
+	SignUpResp {
+		User
+	}
 )
 
-@server(
-    prefix: /api/v1/enroll
+@server (
+	prefix: /api/v1/enroll
 )
-service login-api {
-    @handler SignIn
-    post /signin (SignInReq) returns(SignInResp)
+service enroll-api {
+	@handler SignIn
+	post /signin (SignInReq) returns (SignInResp)
 
-    @handler SignUp
-    post /signup (SignUpReq) returns(SignUpResp)
+	@handler SignUp
+	post /signup (SignUpReq) returns (SignUpResp)
 }
-
 
