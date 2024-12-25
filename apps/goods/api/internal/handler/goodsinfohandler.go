@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"github.com/ac-dcz/lightRW/common/codes"
+	"github.com/ac-dcz/lightRW/common/errors"
+	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 
 	"github.com/ac-dcz/lightRW/apps/goods/api/internal/logic"
@@ -18,6 +21,11 @@ func GoodsInfoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
+		if err := svcCtx.Validate.Struct(&req); err != nil {
+			logx.Errorf("invalid parameters")
+			httpx.ErrorCtx(r.Context(), w, errors.New(codes.InvalidParams, "invalid parameters"))
+			return
+		}
 		l := logic.NewGoodsInfoLogic(r.Context(), svcCtx)
 		resp, err := l.GoodsInfo(&req)
 		if err != nil {

@@ -27,7 +27,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: RegistryGoodsHandler(serverCtx),
 			},
 		},
-		rest.WithJwt(serverCtx.Config.auth.AccessSecret),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/v1/goods"),
 	)
 }

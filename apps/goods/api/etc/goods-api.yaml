@@ -1,3 +1,14 @@
 Name: goods-api
 Host: 0.0.0.0
 Port: 8888
+
+Auth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+
+GoodsRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: goods.rpc

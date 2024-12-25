@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"github.com/ac-dcz/lightRW/apps/goods/rpc/goodsrpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/ac-dcz/lightRW/apps/goods/api/internal/svc"
 	"github.com/ac-dcz/lightRW/apps/goods/api/internal/types"
@@ -15,7 +17,7 @@ type GoodsInfoLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-// 获取商品元信息
+// NewGoodsInfoLogic 获取商品元信息
 func NewGoodsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GoodsInfoLogic {
 	return &GoodsInfoLogic{
 		Logger: logx.WithContext(ctx),
@@ -25,7 +27,19 @@ func NewGoodsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GoodsIn
 }
 
 func (l *GoodsInfoLogic) GoodsInfo(req *types.GoodsInfoReq) (resp *types.GoodsInfoResp, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	//添加metadata
+	l.ctx = metadata.AppendToOutgoingContext(l.ctx, "token", req.Token)
+	if resp, err := l.svcCtx.GoodRpc.GoodsInfo(l.ctx, &goodsrpc.GoodsInfoReq{
+		Sku: req.Sku,
+	}); err != nil {
+		return nil, err
+	} else {
+		return &types.GoodsInfoResp{
+			Goods: types.Goods{
+				GoodsId: resp.Goods.GoodsId,
+				Sku:     resp.Goods.Sku,
+				Name:    resp.Goods.Name,
+			},
+		}, nil
+	}
 }

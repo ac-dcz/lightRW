@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/ac-dcz/lightRW/common/http"
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"github.com/ac-dcz/lightRW/apps/goods/api/internal/config"
 	"github.com/ac-dcz/lightRW/apps/goods/api/internal/handler"
@@ -25,6 +27,10 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+
+	//将返回格式封装
+	httpx.SetErrorHandler(http.ErrorHandler())
+	httpx.SetOkHandler(http.OkHandler())
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()

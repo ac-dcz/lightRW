@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"github.com/ac-dcz/lightRW/common/codes"
+	"github.com/ac-dcz/lightRW/common/errors"
 	"net/http"
 
 	"github.com/ac-dcz/lightRW/apps/goods/api/internal/logic"
@@ -15,6 +17,11 @@ func RegistryGoodsHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var req types.RegistryGoodsReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
+		if err := svcCtx.Validator.Struct(&req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, errors.New(codes.InvalidParams, "invalid parameters"))
 			return
 		}
 

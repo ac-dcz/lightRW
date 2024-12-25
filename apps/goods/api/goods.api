@@ -16,14 +16,16 @@ type Goods {
 
 type (
 	RegistryGoodsReq {
-		Sku  string `form:"sku"`
-		Name string `form:"name"`
+		Sku   string `form:"sku" validate:"required"`
+		Name  string `form:"name" validate:"required"`
+		Token string `json:"token" validate:"required`
 	}
 	RegistryGoodsResp {
 		Goods
 	}
 	GoodsInfoReq {
-		Sku string `path:"sku"`
+		Sku   string `path:"sku" validate:"required"`
+		Token string `json:"token" validate:"required`
 	}
 	GoodsInfoResp {
 		Goods
@@ -31,7 +33,7 @@ type (
 )
 
 @server (
-	jwt:    auth
+	jwt:    Auth
 	prefix: /api/v1/goods
 )
 service goods-api {
