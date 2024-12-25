@@ -41,6 +41,7 @@ func (l *GoodsInfoLogic) GoodsInfo(in *pb.GoodsInfoReq) (*pb.GoodsInfoResp, erro
 			GoodsId: goods.Id,
 			Sku:     goods.Sku,
 			Name:    goods.Name,
+			Uid:     goods.Uid,
 		},
 	}, nil
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/ac-dcz/lightRW/apps/goods/model"
 	"github.com/ac-dcz/lightRW/common/codes"
 	"github.com/ac-dcz/lightRW/common/errors"
+	"strconv"
 
 	"github.com/ac-dcz/lightRW/apps/goods/rpc/internal/svc"
 	"github.com/ac-dcz/lightRW/apps/goods/rpc/pb"
@@ -38,9 +39,16 @@ func (l *RegistryGoodsLogic) RegistryGoods(in *pb.RegistryGoodsReq) (*pb.Registr
 		return nil, errors.New(codes.SkuAlreadyExists, "sku is already exists")
 	}
 	//Step2: 更新数据库
+	t, ok := l.ctx.Value("uid").(string)
+	if !ok {
+		return nil, errors.New(codes.InternalError, "uid not found in context")
+	}
+	uid, _ := strconv.ParseUint(t, 10, 64)
+
 	goods := model.Goods{
 		Sku:  in.Sku,
 		Name: in.Name,
+		Uid:  uid,
 	}
 	if r, err := l.svcCtx.GoodsModel.Insert(l.ctx, &goods); err != nil {
 		l.Logger.Errorf("RegistryGoods Insert err: %v", err)
@@ -52,6 +60,7 @@ func (l *RegistryGoodsLogic) RegistryGoods(in *pb.RegistryGoodsReq) (*pb.Registr
 				GoodsId: uint64(id),
 				Name:    in.Name,
 				Sku:     in.Sku,
+				Uid:     uid,
 			},
 		}, nil
 	}

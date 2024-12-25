@@ -40,6 +40,7 @@ type (
 	Goods struct {
 		Id       uint64    `db:"id"`        // id
 		Sku      string    `db:"sku"`       // sku
+		Uid      uint64    `db:"uid"`       // uid
 		Name     string    `db:"name"`      // 名称
 		CreateAt time.Time `db:"create_at"` // 创建时间
 		UpdateAt time.Time `db:"update_at"` // 更新时间
@@ -88,14 +89,14 @@ func (m *defaultGoodsModel) FindOneBySku(ctx context.Context, sku string) (*Good
 }
 
 func (m *defaultGoodsModel) Insert(ctx context.Context, data *Goods) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, goodsRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Sku, data.Name)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, goodsRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.Sku, data.Uid, data.Name)
 	return ret, err
 }
 
 func (m *defaultGoodsModel) Update(ctx context.Context, newData *Goods) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, goodsRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.Sku, newData.Name, newData.Id)
+	_, err := m.conn.ExecCtx(ctx, query, newData.Sku, newData.Uid, newData.Name, newData.Id)
 	return err
 }
 

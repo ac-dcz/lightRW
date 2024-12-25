@@ -4,3 +4,9 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: goods.rpc
+
+Auth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+GoodsModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?charset=utf8mb4&parseTime=True&loc=Local

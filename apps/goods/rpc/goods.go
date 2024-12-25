@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/ac-dcz/lightRW/common/interceptor"
+	"github.com/ac-dcz/lightRW/common/jwt"
 
 	"github.com/ac-dcz/lightRW/apps/goods/rpc/internal/config"
 	"github.com/ac-dcz/lightRW/apps/goods/rpc/internal/server"
@@ -33,6 +35,11 @@ func main() {
 		}
 	})
 	defer s.Stop()
+
+	s.AddUnaryInterceptors(interceptor.ErrorForServer(), interceptor.AuthForServer(&jwt.Option{
+		AccessSecret: c.Auth.AccessSecret,
+		AccessExpire: c.Auth.AccessExpire,
+	}))
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

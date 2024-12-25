@@ -8,6 +8,7 @@ message Goods{
   uint64 GoodsId = 1;
   string Sku = 2;
   string Name = 3;
+  uint64 Uid = 4;
 }
 
 message RegistryGoodsReq{
