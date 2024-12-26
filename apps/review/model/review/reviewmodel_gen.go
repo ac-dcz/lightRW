@@ -58,7 +58,7 @@ type (
 		OpReason      string    `db:"op_reason"`      // 运营审核拒绝原因
 		GoodsSnapshot string    `db:"goods_snapshot"` // 商品快照信息
 		IsDel         byte      `db:"is_del"`         // 0否/1是
-		CreatAt       time.Time `db:"creat_at"`       // 创建时间
+		CreateAt      time.Time `db:"create_at"`      // 创建时间
 		UpdateAt      time.Time `db:"update_at"`      // 更新时间
 	}
 )
@@ -126,8 +126,8 @@ func (m *defaultReviewModel) Insert(ctx context.Context, data *Review) (sql.Resu
 	reviewIdKey := fmt.Sprintf("%s%v", cacheReviewIdPrefix, data.Id)
 	reviewUidStoreIdSkuOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheReviewUidStoreIdSkuOrderIdPrefix, data.Uid, data.StoreId, data.Sku, data.OrderId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, reviewRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Uid, data.StoreId, data.Sku, data.OrderId, data.Score, data.GoodsDesc, data.HasImage, data.ImageJson, data.StoreScore, data.IsReply, data.Status, data.OpReason, data.GoodsSnapshot, data.IsDel, data.CreatAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, reviewRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Uid, data.StoreId, data.Sku, data.OrderId, data.Score, data.GoodsDesc, data.HasImage, data.ImageJson, data.StoreScore, data.IsReply, data.Status, data.OpReason, data.GoodsSnapshot, data.IsDel)
 	}, reviewIdKey, reviewUidStoreIdSkuOrderIdKey)
 	return ret, err
 }
@@ -142,7 +142,7 @@ func (m *defaultReviewModel) Update(ctx context.Context, newData *Review) error 
 	reviewUidStoreIdSkuOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheReviewUidStoreIdSkuOrderIdPrefix, data.Uid, data.StoreId, data.Sku, data.OrderId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, reviewRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Uid, newData.StoreId, newData.Sku, newData.OrderId, newData.Score, newData.GoodsDesc, newData.HasImage, newData.ImageJson, newData.StoreScore, newData.IsReply, newData.Status, newData.OpReason, newData.GoodsSnapshot, newData.IsDel, newData.CreatAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Uid, newData.StoreId, newData.Sku, newData.OrderId, newData.Score, newData.GoodsDesc, newData.HasImage, newData.ImageJson, newData.StoreScore, newData.IsReply, newData.Status, newData.OpReason, newData.GoodsSnapshot, newData.IsDel, newData.Id)
 	}, reviewIdKey, reviewUidStoreIdSkuOrderIdKey)
 	return err
 }

@@ -13,7 +13,7 @@ create table if not exists reply(
     `op_reason` varchar(512) NOT NULL DEFAULT '' COMMENT '运营审核拒绝原因',
 
     is_del bit(1) not null default 0 comment "0否/1是",
-    creat_at datetime not null default now() comment "创建时间",
+    create_at datetime not null default now() comment "创建时间",
     update_at datetime not null default now() on update now() comment "更新时间",
     primary key (id),
     key ind_mid_sid_sku (mid,store_id,sku,review_id)

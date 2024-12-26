@@ -52,7 +52,7 @@ type (
 		Status       uint64    `db:"status"`        // 状态:10待审核；20审核通过；30审核不通过；40隐藏
 		OpReason     string    `db:"op_reason"`     // 运营审核拒绝原因
 		IsDel        byte      `db:"is_del"`        // 0否/1是
-		CreatAt      time.Time `db:"creat_at"`      // 创建时间
+		CreateAt     time.Time `db:"create_at"`     // 创建时间
 		UpdateAt     time.Time `db:"update_at"`     // 更新时间
 	}
 )
@@ -93,8 +93,8 @@ func (m *defaultReplyModel) FindOne(ctx context.Context, id uint64) (*Reply, err
 func (m *defaultReplyModel) Insert(ctx context.Context, data *Reply) (sql.Result, error) {
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, replyRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel, data.CreatAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, replyRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel)
 	}, replyIdKey)
 	return ret, err
 }
@@ -103,7 +103,7 @@ func (m *defaultReplyModel) Update(ctx context.Context, data *Reply) error {
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, replyRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel, data.CreatAt, data.Id)
+		return conn.ExecCtx(ctx, query, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel, data.Id)
 	}, replyIdKey)
 	return err
 }

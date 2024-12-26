@@ -19,7 +19,7 @@ create table if not exists review(
     `goods_snapshot` varchar(2048) NOT NULL DEFAULT '' COMMENT '商品快照信息',
 
     is_del bit(1) not null default 0 comment "0否/1是",
-    creat_at datetime not null default now() comment "创建时间",
+    create_at datetime not null default now() comment "创建时间",
     update_at datetime not null default now() on update now() comment "更新时间",
 
     primary key (id),
