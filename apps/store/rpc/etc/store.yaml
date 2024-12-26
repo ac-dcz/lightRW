@@ -1,0 +1,17 @@
+Name: store.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: store.rpc
+
+TokenAuth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+StoreModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?charset=utf8mb4&parseTime=True&loc=Local
+StoreCacheConf:
+  - Host: 127.0.0.1:6379
+    Type: node
+    
+GoodsStoreModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?charset=utf8mb4&parseTime=True&loc=Local

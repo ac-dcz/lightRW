@@ -1,3 +1,55 @@
 syntax = "proto3";
 
-package template;
+package pb;
+
+
+option go_package = "./pb";
+
+message StoreInfo {
+  uint64 Id = 1;
+  uint64 StoreId = 2;
+  string Name = 3;
+  uint64 Uid = 4;
+  string CreateDate = 5;
+}
+
+message RegistryStoreReq{
+  uint64 StoreId = 1;
+  string Name = 2;
+}
+
+message  RegistryStoreResp{
+  StoreInfo Info = 1;
+}
+
+message StoreInfoReq{
+  uint64 StoreId = 1;
+}
+
+message StoreInfoResp{
+  StoreInfo Info = 1;
+}
+
+message AddGoodsReq{
+  uint64 StoreId = 1;
+  string Sku = 2;
+  uint64 Stock = 3;
+}
+
+message AddGoodsResp{}
+
+message GoodsStockReq{
+  uint64 StoreId = 1;
+  string Sku = 2;
+}
+
+message GoodsStockResp{
+  uint64 Stock = 1;
+}
+
+service Store{
+  rpc RegistryStore(RegistryStoreReq) returns(RegistryStoreResp);
+  rpc GetStoreInfo(StoreInfoReq) returns(StoreInfoResp);
+  rpc AddGoods(AddGoodsReq) returns(AddGoodsResp);
+  rpc GetGoodsStock(GoodsStockReq) returns(GoodsStockResp);
+}
