@@ -7,7 +7,7 @@ import (
 type Config struct {
 	zrpc.RpcServerConf
 	GoodsModelDSN string
-	Auth          struct {
+	TokenAuth     struct {
 		AccessSecret string
 		AccessExpire int64
 	}

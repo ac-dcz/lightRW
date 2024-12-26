@@ -25,7 +25,13 @@ func NewSignUpLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SignUpLogi
 }
 
 func (l *SignUpLogic) SignUp(req *types.SignUpReq) (resp *types.SignUpResp, err error) {
-	if resp, err := l.svcCtx.UserRpc.SignUp(l.ctx, &userrpc.SignUpReq{}); err != nil {
+	if resp, err := l.svcCtx.UserRpc.SignUp(l.ctx, &userrpc.SignUpReq{
+		Tel:      req.Tel,
+		Code:     req.Code,
+		NickName: req.NickName,
+		Pass:     req.Pass,
+		Level:    req.Level,
+	}); err != nil {
 		l.Logger.Errorf("SignUp rpc call error: %v", err)
 		return nil, err
 	} else {

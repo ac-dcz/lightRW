@@ -47,9 +47,9 @@ type (
 		NickName string    `db:"nick_name"` // 昵称
 		Tel      string    `db:"tel"`       // 手机号
 		Password string    `db:"password"`  // 密码
-		Level    byte      `db:"level"`     // 1普通用户/2商家/4管理员
+		Level    []byte      `db:"level"`     // 1普通用户/2商家/4管理员
 		Status   uint64    `db:"status"`    // 0有效/1注销
-		CreatAt  time.Time `db:"creat_at"`  // 创建时间
+		CreateAt time.Time `db:"create_at"` // 创建时间
 		UpdateAt time.Time `db:"update_at"` // 更新时间
 	}
 )
@@ -117,8 +117,8 @@ func (m *defaultUserModel) Insert(ctx context.Context, data *User) (sql.Result, 
 	userIdKey := fmt.Sprintf("%s%v", cacheUserIdPrefix, data.Id)
 	userTelKey := fmt.Sprintf("%s%v", cacheUserTelPrefix, data.Tel)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.NickName, data.Tel, data.Password, data.Level, data.Status, data.CreatAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.NickName, data.Tel, data.Password, data.Level, data.Status)
 	}, userIdKey, userTelKey)
 	return ret, err
 }
@@ -133,7 +133,7 @@ func (m *defaultUserModel) Update(ctx context.Context, newData *User) error {
 	userTelKey := fmt.Sprintf("%s%v", cacheUserTelPrefix, data.Tel)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.NickName, newData.Tel, newData.Password, newData.Level, newData.Status, newData.CreatAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.NickName, newData.Tel, newData.Password, newData.Level, newData.Status, newData.Id)
 	}, userIdKey, userTelKey)
 	return err
 }

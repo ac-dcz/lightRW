@@ -1,5 +1,5 @@
 Name: user.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:8000
 Etcd:
   Hosts:
   - 127.0.0.1:2379
@@ -10,3 +10,9 @@ VerifyCodeConf:
     Hosts:
       - 127.0.0.1:2379
     Key: code.rpc
+
+UserModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?charset=utf8mb4&parseTime=True&loc=Local
+
+UserModelCache:
+  - Host: 127.0.0.1:6379
+    Type: node

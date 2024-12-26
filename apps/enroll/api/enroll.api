@@ -34,6 +34,9 @@ type (
 	SignUpResp {
 		User
 	}
+	GenVerifyCodeReq {
+		Tel string `form:"tel" validate:"required"`
+	}
 )
 
 @server (
@@ -45,5 +48,13 @@ service enroll-api {
 
 	@handler SignUp
 	post /signup (SignUpReq) returns (SignUpResp)
+}
+
+@server (
+	prefix: /api/v1/code
+)
+service enroll-api {
+	@handler GenVerifyCode
+	get /gen (GenVerifyCodeReq)
 }
 

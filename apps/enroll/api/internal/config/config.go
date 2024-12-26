@@ -7,8 +7,9 @@ import (
 
 type Config struct {
 	rest.RestConf
-	UserRpcConf zrpc.RpcClientConf
-	Auth        struct {
+	UserRpcConf       zrpc.RpcClientConf
+	VerifyCodeRpcConf zrpc.RpcClientConf
+	Auth              struct {
 		AccessSecret string
 		AccessExpire int64
 	}

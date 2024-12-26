@@ -11,7 +11,7 @@ type Goods struct {
 
 type GoodsInfoReq struct {
 	Sku   string `path:"sku" validate:"required"`
-	Token string `json:"token" validate:"required`
+	Token string `json:"token,optional"`
 }
 
 type GoodsInfoResp struct {
@@ -21,7 +21,7 @@ type GoodsInfoResp struct {
 type RegistryGoodsReq struct {
 	Sku   string `form:"sku" validate:"required"`
 	Name  string `form:"name" validate:"required"`
-	Token string `json:"token" validate:"required`
+	Token string `json:"token,optional"`
 }
 
 type RegistryGoodsResp struct {

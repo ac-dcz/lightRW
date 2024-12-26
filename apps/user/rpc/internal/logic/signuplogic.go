@@ -59,7 +59,7 @@ func (l *SignUpLogic) SignUp(in *pb.SignUpReq) (*pb.SignUpResp, error) {
 		NickName: in.NickName,
 		Password: pwd,
 		Tel:      in.Tel,
-		Level:    byte(in.Level),
+		Level:    []byte{byte(in.Level)},
 		Status:   model.StatusOk,
 	}
 

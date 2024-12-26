@@ -27,4 +27,15 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithPrefix("/api/v1/enroll"),
 	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/gen",
+				Handler: GenVerifyCodeHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/v1/code"),
+	)
 }

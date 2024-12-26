@@ -18,14 +18,14 @@ type (
 	RegistryGoodsReq {
 		Sku   string `form:"sku" validate:"required"`
 		Name  string `form:"name" validate:"required"`
-		Token string `json:"token" validate:"required`
+		Token string `json:"token,optional"`
 	}
 	RegistryGoodsResp {
 		Goods
 	}
 	GoodsInfoReq {
 		Sku   string `path:"sku" validate:"required"`
-		Token string `json:"token" validate:"required`
+		Token string `json:"token,optional"`
 	}
 	GoodsInfoResp {
 		Goods

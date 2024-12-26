@@ -1,6 +1,6 @@
 Name: enroll-api
 Host: 0.0.0.0
-Port: 8888
+Port: 9000
 
 Auth:
   AccessSecret: "chaozhengding@hust.edu.cn"
@@ -11,3 +11,9 @@ UserRpcConf:
     Hosts:
       - 127.0.0.1:2379
     Key: user.rpc
+
+VerifyCodeRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: code.rpc

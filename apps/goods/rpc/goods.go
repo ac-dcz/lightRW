@@ -37,8 +37,8 @@ func main() {
 	defer s.Stop()
 
 	s.AddUnaryInterceptors(interceptor.ErrorForServer(), interceptor.AuthForServer(&jwt.Option{
-		AccessSecret: c.Auth.AccessSecret,
-		AccessExpire: c.Auth.AccessExpire,
+		AccessSecret: c.TokenAuth.AccessSecret,
+		AccessExpire: c.TokenAuth.AccessExpire,
 	}))
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)

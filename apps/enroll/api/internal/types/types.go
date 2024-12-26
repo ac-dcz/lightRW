@@ -3,6 +3,10 @@
 
 package types
 
+type GenVerifyCodeReq struct {
+	Tel string `form:"tel" validate:"required"`
+}
+
 type SignInReq struct {
 	Tel  string `json:"tel" validate:"required"`
 	Pass string `json:"pass" validate:"required"`

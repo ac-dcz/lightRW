@@ -2,6 +2,8 @@ package jwt
 
 import (
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4/request"
+	"net/http"
 	"time"
 )
 
@@ -32,4 +34,15 @@ func VerifyToken(opt *Option, tokenStr string) (jwt.MapClaims, error) {
 		return nil, err
 	}
 	return token.Claims.(jwt.MapClaims), nil
+}
+
+func ParseTokenFromRequest(opt *Option, r *http.Request) (string, error) {
+	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
+		func(token *jwt.Token) (any, error) {
+			return []byte(opt.AccessSecret), nil
+		})
+	if err != nil {
+		return "", err
+	}
+	return token.Raw, nil
 }

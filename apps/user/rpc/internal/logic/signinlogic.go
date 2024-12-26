@@ -50,7 +50,7 @@ func (l *SignInLogic) SignIn(in *pb.SignInReq) (*pb.SignInResp, error) {
 			Uid:      user.Id,
 			NickName: user.NickName,
 			Tel:      user.Tel,
-			Level:    uint32(user.Level),
+			Level:    uint32(user.Level[0]),
 		},
 	}, nil
 }
