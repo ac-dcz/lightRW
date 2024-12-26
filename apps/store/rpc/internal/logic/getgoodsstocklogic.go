@@ -2,6 +2,10 @@ package logic
 
 import (
 	"context"
+	stderr "errors"
+	gmodel "github.com/ac-dcz/lightRW/apps/goods/model"
+	"github.com/ac-dcz/lightRW/common/codes"
+	"github.com/ac-dcz/lightRW/common/errors"
 
 	"github.com/ac-dcz/lightRW/apps/store/rpc/internal/svc"
 	"github.com/ac-dcz/lightRW/apps/store/rpc/pb"
@@ -24,7 +28,16 @@ func NewGetGoodsStockLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 }
 
 func (l *GetGoodsStockLogic) GetGoodsStock(in *pb.GoodsStockReq) (*pb.GoodsStockResp, error) {
-	// todo: add your logic here and delete this line
 
-	return &pb.GoodsStockResp{}, nil
+	if data, err := l.svcCtx.GoodsStoreModel.FindOneByStoreIdSku(l.ctx, in.StoreId, in.Sku); stderr.Is(err, gmodel.ErrNotFound) {
+		l.Logger.Errorf("find goods stock err: %v", err)
+		return nil, errors.New(codes.GoodsNotFound, err.Error())
+	} else if err != nil {
+		l.Logger.Errorf("find goods stock err: %v", err)
+		return nil, errors.New(codes.InternalError, err.Error())
+	} else {
+		return &pb.GoodsStockResp{
+			Stock: data.Stock,
+		}, nil
+	}
 }

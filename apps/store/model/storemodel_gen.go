@@ -47,7 +47,7 @@ type (
 		StoreId  uint64    `db:"store_id"`  // 店铺id
 		Name     string    `db:"name"`      // 店铺名称
 		Uid      uint64    `db:"uid"`       // 拥有者
-		CreatAt  time.Time `db:"creat_at"`  // 创建时间
+		CreateAt time.Time `db:"create_at"` // 创建时间
 		UpdateAt time.Time `db:"update_at"` // 更新时间
 	}
 )
@@ -115,8 +115,8 @@ func (m *defaultStoreModel) Insert(ctx context.Context, data *Store) (sql.Result
 	storeIdKey := fmt.Sprintf("%s%v", cacheStoreIdPrefix, data.Id)
 	storeStoreIdKey := fmt.Sprintf("%s%v", cacheStoreStoreIdPrefix, data.StoreId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, storeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.StoreId, data.Name, data.Uid, data.CreatAt)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, storeRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.StoreId, data.Name, data.Uid)
 	}, storeIdKey, storeStoreIdKey)
 	return ret, err
 }
@@ -131,7 +131,7 @@ func (m *defaultStoreModel) Update(ctx context.Context, newData *Store) error {
 	storeStoreIdKey := fmt.Sprintf("%s%v", cacheStoreStoreIdPrefix, data.StoreId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, storeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.StoreId, newData.Name, newData.Uid, newData.CreatAt, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.StoreId, newData.Name, newData.Uid, newData.Id)
 	}, storeIdKey, storeStoreIdKey)
 	return err
 }

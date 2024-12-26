@@ -1,0 +1,26 @@
+Name: store-api
+Host: 0.0.0.0
+Port: 9020
+
+Auth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+
+GenIdConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: genid.rpc
+
+GoodsConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: goods.rpc
+
+StoreConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: store.rpc

@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	gmodel "github.com/ac-dcz/lightRW/apps/goods/model"
+	"github.com/ac-dcz/lightRW/common/codes"
+	"github.com/ac-dcz/lightRW/common/errors"
 
 	"github.com/ac-dcz/lightRW/apps/store/rpc/internal/svc"
 	"github.com/ac-dcz/lightRW/apps/store/rpc/pb"
@@ -24,7 +27,15 @@ func NewAddGoodsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AddGoods
 }
 
 func (l *AddGoodsLogic) AddGoods(in *pb.AddGoodsReq) (*pb.AddGoodsResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.AddGoodsResp{}, nil
+	data := &gmodel.GoodsStore{
+		StoreId: in.StoreId,
+		Stock:   in.Stock,
+		Sku:     in.Sku,
+	}
+	if _, err := l.svcCtx.GoodsStoreModel.Insert(l.ctx, data); err != nil {
+		l.Logger.Errorf("AddGoods err:%v", err)
+		return nil, errors.New(codes.InternalError, err.Error())
+	} else {
+		return &pb.AddGoodsResp{}, nil
+	}
 }

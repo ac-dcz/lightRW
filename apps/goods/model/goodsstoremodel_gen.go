@@ -42,6 +42,7 @@ type (
 		StoreId  uint64    `db:"store_id"`
 		Sku      string    `db:"sku"`       // sku
 		Stock    uint64    `db:"stock"`     // 库存
+		Status   uint64    `db:"status"`    // 0在售/1下架
 		CreateAt time.Time `db:"create_at"` // 创建时间
 		UpdateAt time.Time `db:"update_at"` // 更新时间
 	}
@@ -89,14 +90,14 @@ func (m *defaultGoodsStoreModel) FindOneByStoreIdSku(ctx context.Context, storeI
 }
 
 func (m *defaultGoodsStoreModel) Insert(ctx context.Context, data *GoodsStore) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, goodsStoreRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.StoreId, data.Sku, data.Stock)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?)", m.table, goodsStoreRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.StoreId, data.Sku, data.Stock, data.Status)
 	return ret, err
 }
 
 func (m *defaultGoodsStoreModel) Update(ctx context.Context, newData *GoodsStore) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, goodsStoreRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.StoreId, newData.Sku, newData.Stock, newData.Id)
+	_, err := m.conn.ExecCtx(ctx, query, newData.StoreId, newData.Sku, newData.Stock, newData.Status, newData.Id)
 	return err
 }
 

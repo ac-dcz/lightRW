@@ -32,3 +32,9 @@ const (
 	SkuAlreadyExists Code = 30000 + iota
 	SkuNotRegistry
 )
+
+// for store
+const (
+	StoreNotRegistry Code = 40000 + iota
+	GoodsNotFound
+)
