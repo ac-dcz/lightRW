@@ -1,9 +1,58 @@
 syntax = "v1"
 
-info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+info (
+	title:   "order api"
+	desc:    "order api file"
+	author:  "dcz"
+	email:   "chaozhengding@hust.edu.cn"
+	version: "v1"
 )
+
+type (
+	OrderEntry {
+		StoreId uint64 `json:"store_id"`
+		Sku     string `json:"sku"`
+		Nums    int32  `json:"nums"`
+	}
+	CreateOrderReq {
+		Entries []OrderEntry `json:"entries"`
+	}
+	CreateOrderResp {
+		OrderId uint64 `json:"order_id"`
+		Status  int32  `json:"status"`
+	}
+	PayOrderReq {
+		OrderId uint64 `json:"order_id"`
+	}
+	PayOrderResp {
+		Status int32 `json:"status"`
+	}
+	OrderInfoReq {
+		OrderId uint64 `json:"order_id"`
+	}
+	OrderInfoResp {
+		Id       uint64       `json:"id"`
+		OrderId  uint64       `json:"order_id"`
+		Uid      uint64       `json:"uid"`
+		Status   int32        `json:"status"`
+		Entries  []OrderEntry `json:"entries"`
+		CreateAt string       `json:"create_at"`
+	}
+)
+
+@server (
+	jwt:        Auth
+	middleware: RateLimit
+	prefix:     /api/v1/order
+)
+service order-api {
+	@handler CreateOrder
+	post /create (CreateOrderReq) returns (CreateOrderResp)
+
+	@handler PayOrder
+	post /pay (PayOrderReq) returns (PayOrderResp)
+
+	@handler OrderInfo
+	post /info (OrderInfoReq) returns (OrderInfoResp)
+}
+
