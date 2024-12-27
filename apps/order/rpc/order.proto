@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "./pb";
+
+message OrderEntry{
+  uint64 StoreId = 1;
+  string Sku = 2;
+  int32 Nums = 3;
+}
+
+message CreateOrderReq{
+  uint64 Uid = 1;
+  repeated OrderEntry Entries = 2;
+}
+
+message CreateOrderResp{
+  uint64 OrderId = 1;
+  uint64 Id = 2;
+  int32 Status = 3;
+}
+
+message PayOrderReq{
+  uint64 OrderId = 1;
+  uint64 Uid = 2;
+}
+
+message PayOrderResp{
+  uint64 OrderId = 1;
+  uint64 Id = 2;
+  int32 Status = 3;
+}
+
+message OrderInfoReq{
+  uint64 OrderId = 1;
+  uint64 Uid = 2;
+}
+
+message OrderInfoResp{
+  uint64 OrderId = 1;
+  uint64 Id = 2;
+  uint64 Uid = 3;
+  repeated OrderEntry Entries = 4;
+  int32 Status = 5;
+  string CreateAt = 6;
+}
+
+message OrderStatusReq{
+  uint64 OrderId = 1;
+}
+
+message OrderStatusResp{
+  int32 Status = 1;
+}
+
+service Order{
+  rpc CreateOrder(CreateOrderReq) returns(CreateOrderResp);
+  rpc PayOrder(PayOrderReq) returns(PayOrderResp);
+  rpc OrderInfo(OrderInfoReq) returns(OrderInfoResp);
+  rpc OrderStatus(OrderStatusReq) returns(OrderStatusResp);
+}

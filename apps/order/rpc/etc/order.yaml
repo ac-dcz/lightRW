@@ -1,0 +1,22 @@
+Name: order.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: order.rpc
+
+TokenAuth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+OrderModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?parseTime=True&charset=utf8mb4&loc=Local
+
+OrderCacheConf:
+  - Host: 127.0.0.1:6379
+    Type: node
+
+GenIdRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: genid.rpc
