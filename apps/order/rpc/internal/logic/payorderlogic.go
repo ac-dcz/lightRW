@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	stderr "errors"
 	"github.com/ac-dcz/lightRW/apps/order/model"
 	"github.com/ac-dcz/lightRW/apps/order/rpc/internal/svc"
 	"github.com/ac-dcz/lightRW/apps/order/rpc/pb"
@@ -27,23 +28,24 @@ func NewPayOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PayOrder
 
 func (l *PayOrderLogic) PayOrder(in *pb.PayOrderReq) (*pb.PayOrderResp, error) {
 
-	//Step1: 获取未支付订单
-	//datas, err := l.svcCtx.OrderModel.FindOrdersWithStatus(l.ctx, in.OrderId, in.Uid, model.UnPay)
-	//if stderr.Is(err, model.ErrNotFound) {
-	//	return &pb.PayOrderResp{
-	//		OrderId: in.OrderId,
-	//	}, nil
-	//} else if err != nil {
-	//	l.Errorf("Logic.PayOrder err: %v", err)
-	//	return nil, errors.New(codes.InternalError, err.Error())
-	//}
-
-	r, err := l.svcCtx.OrderModel.UpdateOrdersForStatus(l.ctx, in.OrderId, in.Uid, model.Pay)
-	if err != nil {
-		l.Errorf("Logic.PayOrder err: %v", err)
+	//Step1: 判断订单是否存在
+	order, err := l.svcCtx.OrderModel.FindOneByOrderId(l.ctx, in.OrderId)
+	if stderr.Is(err, model.ErrNotFound) {
+		return nil, errors.New(codes.OrderNotFound, "order not found")
+	} else if err != nil {
+		l.Errorf("PayOrder err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())
-	} else if r == 0 {
-		//TODO:
+	} else if order.Status == model.Pay {
+		return nil, errors.New(codes.OrderPayed, "order has been pay already")
+	} else if order.Status == model.Expired {
+		return nil, errors.New(codes.OrderExpire, "order expired")
+	}
+
+	//Step2: 跟新订单状态
+	_, err = l.svcCtx.OrderModel.UpdateOrdersForStatus(l.ctx, in.OrderId, in.Uid, model.Pay)
+	if err != nil {
+		l.Errorf("PayOrder err: %v", err)
+		return nil, errors.New(codes.InternalError, err.Error())
 	}
 
 	return &pb.PayOrderResp{

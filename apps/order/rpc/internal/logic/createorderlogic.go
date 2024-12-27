@@ -28,6 +28,7 @@ func NewCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Creat
 }
 
 func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.CreateOrderResp, error) {
+
 	//Step1: 获取OrderID
 	OrderId, err := l.svcCtx.GenIdRpc.GetId(l.ctx, &genid.GetIdReq{})
 	if err != nil {
@@ -47,6 +48,15 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.CreateOrderRe
 			Status:  model.UnPay,
 		})
 	}
+
+	//Step3: 判断store_id 和 sku 是否存在?
+
+	//Step4:
+	//1. store_id sku 是否存在
+	//2. 库存是否足够?
+	//3. 减库存
+	//4. 插入订单
+
 	if err := l.svcCtx.OrderModel.InsertWithTx(l.ctx, orders...); err != nil {
 		l.Errorf("OrderModel.InsertWithTx err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())

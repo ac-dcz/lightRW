@@ -38,3 +38,10 @@ const (
 	StoreNotRegistry Code = 40000 + iota
 	GoodsNotFound
 )
+
+// for order
+const (
+	OrderNotFound Code = 50000 + iota
+	OrderPayed
+	OrderExpire
+)
