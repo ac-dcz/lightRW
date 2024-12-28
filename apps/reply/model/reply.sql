@@ -5,7 +5,7 @@ create table if not exists reply(
     reply_id bigint unsigned not null comment "回复id",
     mid bigint unsigned not null comment "商家id",
     store_id bigint unsigned not null comment "店铺id",
-    sku bigint unsigned not null comment "sku",
+    sku varchar(40) not null comment "sku",
     review_id bigint unsigned not null comment "评价id",
 
     reply_content varchar(512) not null comment "回复内容",
@@ -18,7 +18,13 @@ create table if not exists reply(
     create_at datetime not null default now() comment "创建时间",
     update_at datetime not null default now() on update now() comment "更新时间",
     primary key (id),
-    key ind_mid_sid_sku (mid,store_id,sku,review_id)
+    unique key uk_reply_id(reply_id),
+    key ind_mid_sid_sku (store_id,sku),
+    key ind_review_id(review_id)
 )Engine = InnoDB default charset utf8mb4 collate utf8mb4_general_ci;
 
 -- alter table reply add constraint fk_review_id foreign key (review_id) references review(id);
+
+-- alter table reply modify column sku varchar(40) not null comment "sku";
+
+-- create index ind_review_id on reply(review_id);

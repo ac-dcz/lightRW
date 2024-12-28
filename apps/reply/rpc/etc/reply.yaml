@@ -1,0 +1,28 @@
+Name: reply.rpc
+ListenOn: 0.0.0.0:8060
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: reply.rpc
+
+TokenAuth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+ReplyModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?parseTime=True&charset=utf8mb4&loc=Local
+
+GenIdRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: genid.rpc
+
+CacheConf:
+  - Host: 127.0.0.1:6379
+    Type: node
+
+ReviewRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: review.rpc

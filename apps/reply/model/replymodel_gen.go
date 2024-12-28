@@ -2,7 +2,7 @@
 // versions:
 //  goctl version: 1.7.3
 
-package reply
+package model
 
 import (
 	"context"
@@ -24,13 +24,15 @@ var (
 	replyRowsExpectAutoSet   = strings.Join(stringx.Remove(replyFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	replyRowsWithPlaceHolder = strings.Join(stringx.Remove(replyFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheReplyIdPrefix = "cache:reply:id:"
+	cacheReplyIdPrefix      = "cache:reply:id:"
+	cacheReplyReplyIdPrefix = "cache:reply:replyId:"
 )
 
 type (
 	replyModel interface {
 		Insert(ctx context.Context, data *Reply) (sql.Result, error)
 		FindOne(ctx context.Context, id uint64) (*Reply, error)
+		FindOneByReplyId(ctx context.Context, replyId uint64) (*Reply, error)
 		Update(ctx context.Context, data *Reply) error
 		Delete(ctx context.Context, id uint64) error
 	}
@@ -45,7 +47,7 @@ type (
 		ReplyId      uint64    `db:"reply_id"`      // 回复id
 		Mid          uint64    `db:"mid"`           // 商家id
 		StoreId      uint64    `db:"store_id"`      // 店铺id
-		Sku          uint64    `db:"sku"`           // sku
+		Sku          string    `db:"sku"`           // sku
 		ReviewId     uint64    `db:"review_id"`     // 评价id
 		ReplyContent string    `db:"reply_content"` // 回复内容
 		HasImage     uint64    `db:"has_image"`     // 0无/1有
@@ -66,11 +68,17 @@ func newReplyModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) *
 }
 
 func (m *defaultReplyModel) Delete(ctx context.Context, id uint64) error {
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, id)
-	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	replyReplyIdKey := fmt.Sprintf("%s%v", cacheReplyReplyIdPrefix, data.ReplyId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, replyIdKey)
+	}, replyIdKey, replyReplyIdKey)
 	return err
 }
 
@@ -91,21 +99,48 @@ func (m *defaultReplyModel) FindOne(ctx context.Context, id uint64) (*Reply, err
 	}
 }
 
+func (m *defaultReplyModel) FindOneByReplyId(ctx context.Context, replyId uint64) (*Reply, error) {
+	replyReplyIdKey := fmt.Sprintf("%s%v", cacheReplyReplyIdPrefix, replyId)
+	var resp Reply
+	err := m.QueryRowIndexCtx(ctx, &resp, replyReplyIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `reply_id` = ? limit 1", replyRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, replyId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
 func (m *defaultReplyModel) Insert(ctx context.Context, data *Reply) (sql.Result, error) {
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, data.Id)
+	replyReplyIdKey := fmt.Sprintf("%s%v", cacheReplyReplyIdPrefix, data.ReplyId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, replyRowsExpectAutoSet)
 		return conn.ExecCtx(ctx, query, data.ReplyId, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel)
-	}, replyIdKey)
+	}, replyIdKey, replyReplyIdKey)
 	return ret, err
 }
 
-func (m *defaultReplyModel) Update(ctx context.Context, data *Reply) error {
+func (m *defaultReplyModel) Update(ctx context.Context, newData *Reply) error {
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, data.Id)
-	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+	replyReplyIdKey := fmt.Sprintf("%s%v", cacheReplyReplyIdPrefix, data.ReplyId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, replyRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.ReplyId, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel, data.Id)
-	}, replyIdKey)
+		return conn.ExecCtx(ctx, query, newData.ReplyId, newData.Mid, newData.StoreId, newData.Sku, newData.ReviewId, newData.ReplyContent, newData.HasImage, newData.ImageJson, newData.Status, newData.OpReason, newData.IsDel, newData.Id)
+	}, replyIdKey, replyReplyIdKey)
 	return err
 }
 

@@ -1,3 +1,76 @@
 syntax = "proto3";
 
-package template;
+package pb;
+
+option go_package = "./pb";
+
+message ReplyInfo {
+  uint64 Mid = 1; //商家id
+  uint64 ReviewId = 2;
+  uint64 StoreId = 3;
+  string Sku = 4;
+  string Content = 5;
+  uint32 HasImage = 6;
+  string ImageCDN = 7;
+  uint64 ReplyId = 8;
+  uint32 Status = 9;
+  string CreateAt = 10;
+  uint32 IsDel = 11;
+}
+
+
+message ProposeReplyReq{
+  uint64 Mid = 1; //商家id
+  uint64 ReviewId = 2;
+  uint64 StoreId = 3;
+  string Sku = 4;
+  string Content = 5;
+  uint32 HasImage = 6;
+  string ImageCDN = 7;
+}
+
+message ProposeReplyResp{
+  uint64 ReplyId = 1;
+  uint32 Status = 2;
+}
+
+message ReplyBySSkuReq{
+  uint64 StoreId = 1;
+  string Sku = 2;
+}
+
+message ReplyBySSkuResp{
+  repeated ReplyInfo Infos = 1;
+}
+
+message ReplyByReviewIdReq{
+  uint64 ReviewId = 1;
+}
+
+message ReplyByReviewIdResp{
+  repeated ReplyInfo Infos = 1;
+}
+
+message ReplyByReplyIdReq{
+  uint64 ReplyId = 1;
+}
+
+message ReplyByReplyIdResp{
+  ReplyInfo Info = 1;
+}
+
+message ReplyByMidReq{
+  uint64 mid = 1;
+}
+
+message ReplyByMidResp{
+  repeated ReplyInfo Infos = 1;
+}
+
+service Reply{
+  rpc ProposeReply(ProposeReplyReq) returns(ProposeReplyResp);
+  rpc ReplyByReplyId(ReplyByReplyIdReq) returns(ReplyByReplyIdResp);
+  rpc ReplyBySSku(ReplyBySSkuReq) returns(ReplyBySSkuResp);
+  rpc ReplyByReviewId(ReplyByReviewIdReq) returns(ReplyByReviewIdResp);
+  rpc ReplyByMid(ReplyByMidReq) returns(ReplyByMidResp);
+}
