@@ -20,3 +20,9 @@ GenIdRpcConf:
     Hosts:
       - 127.0.0.1:2379
     Key: genid.rpc
+
+BizRedisConf:
+  Host: 127.0.0.1:6379
+  Type: node
+
+GStoreModelDSN: root:123456@tcp(127.0.0.1:3307)/gozero_review?parseTime=True&charset=utf8mb4&loc=Local

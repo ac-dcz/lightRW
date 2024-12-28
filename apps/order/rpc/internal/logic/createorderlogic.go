@@ -2,7 +2,9 @@ package logic
 
 import (
 	"context"
+	stderr "errors"
 	"github.com/ac-dcz/lightRW/apps/genid/rpc/genid"
+	gmodel "github.com/ac-dcz/lightRW/apps/goods/model"
 	"github.com/ac-dcz/lightRW/apps/order/model"
 	"github.com/ac-dcz/lightRW/common/codes"
 	"github.com/ac-dcz/lightRW/common/errors"
@@ -36,9 +38,38 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.CreateOrderRe
 		return nil, err
 	}
 
-	//Step2: 存入数据库
+	//Step2:
+	//1. store_id sku 是否存在
+	//2. 库存是否足够?
+	//3. 减库存
+	//4. 插入订单
+	//5. TODO: 绑定超时事件，超时未支付归还库存
+
+	//lock
+	for {
+		select {
+		case <-l.ctx.Done():
+			return nil, l.ctx.Err()
+		default:
+		}
+		if ok, err := l.svcCtx.BizLocker.AcquireCtx(l.ctx); err != nil {
+			l.Logger.Errorf("AcquireCtx err: %v", err)
+			return nil, errors.New(codes.InternalError, err.Error())
+		} else if ok {
+			break
+		}
+	}
+	defer func() {
+		_, _ = l.svcCtx.BizLocker.ReleaseCtx(l.ctx)
+	}()
+
 	orders := make([]*model.Orders, len(in.Entries))
 	for _, entry := range in.Entries {
+		if gs, err := l.svcCtx.GStoreModel.FindOneByStoreIdSku(l.ctx, entry.StoreId, entry.Sku); stderr.Is(err, gmodel.ErrNotFound) {
+			return nil, errors.New(codes.InvalidStoreIdAndSku, "invalid store id and sku")
+		} else if gs.Stock < uint64(entry.Nums) {
+			return nil, errors.New(codes.StockNotEnough, "stock not enough")
+		}
 		orders = append(orders, &model.Orders{
 			OrderId: OrderId.Id,
 			Uid:     in.Uid,
@@ -48,15 +79,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.CreateOrderRe
 			Status:  model.UnPay,
 		})
 	}
-
-	//Step3: 判断store_id 和 sku 是否存在?
-
-	//Step4:
-	//1. store_id sku 是否存在
-	//2. 库存是否足够?
-	//3. 减库存
-	//4. 插入订单
-
+	l.ctx = context.WithValue(l.ctx, "goods_store", l.svcCtx.GStoreModel.TableName())
 	if err := l.svcCtx.OrderModel.InsertWithTx(l.ctx, orders...); err != nil {
 		l.Errorf("OrderModel.InsertWithTx err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())
@@ -66,4 +89,5 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.CreateOrderRe
 		OrderId: OrderId.Id,
 		Status:  int32(model.UnPay),
 	}, nil
+
 }
