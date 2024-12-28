@@ -2,7 +2,7 @@
 // versions:
 //  goctl version: 1.7.3
 
-package review
+package model
 
 import (
 	"context"
@@ -24,15 +24,15 @@ var (
 	reviewRowsExpectAutoSet   = strings.Join(stringx.Remove(reviewFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	reviewRowsWithPlaceHolder = strings.Join(stringx.Remove(reviewFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheReviewIdPrefix                   = "cache:review:id:"
-	cacheReviewUidStoreIdSkuOrderIdPrefix = "cache:review:uid:storeId:sku:orderId:"
+	cacheReviewIdPrefix       = "cache:review:id:"
+	cacheReviewReviewIdPrefix = "cache:review:reviewId:"
 )
 
 type (
 	reviewModel interface {
 		Insert(ctx context.Context, data *Review) (sql.Result, error)
 		FindOne(ctx context.Context, id uint64) (*Review, error)
-		FindOneByUidStoreIdSkuOrderId(ctx context.Context, uid uint64, storeId uint64, sku string, orderId uint64) (*Review, error)
+		FindOneByReviewId(ctx context.Context, reviewId uint64) (*Review, error)
 		Update(ctx context.Context, data *Review) error
 		Delete(ctx context.Context, id uint64) error
 	}
@@ -44,20 +44,21 @@ type (
 
 	Review struct {
 		Id            uint64    `db:"id"`
+		ReviewId      uint64    `db:"review_id"`      // 评论id
 		Uid           uint64    `db:"uid"`            // 用户id
+		OrderId       uint64    `db:"order_id"`       // 订单id
 		StoreId       uint64    `db:"store_id"`       // 店铺id
 		Sku           string    `db:"sku"`            // sku
-		OrderId       uint64    `db:"order_id"`       // 订单id
 		Score         uint64    `db:"score"`          // 0差评/1中评/2好评
 		GoodsDesc     string    `db:"goods_desc"`     // 商品描述
-		HasImage      byte      `db:"has_image"`      // 0有/1无
+		HasImage      uint64    `db:"has_image"`      // 1有/0无
 		ImageJson     string    `db:"image_json"`     // image json
 		StoreScore    uint64    `db:"store_score"`    // 1-5星
-		IsReply       byte      `db:"is_reply"`       // 0否/1是
+		IsReply       uint64    `db:"is_reply"`       // 0否/1是
 		Status        uint64    `db:"status"`         // 状态:10待审核；20审核通过；30审核不通过；40隐藏
 		OpReason      string    `db:"op_reason"`      // 运营审核拒绝原因
 		GoodsSnapshot string    `db:"goods_snapshot"` // 商品快照信息
-		IsDel         byte      `db:"is_del"`         // 0否/1是
+		IsDel         uint64    `db:"is_del"`         // 0否/1是
 		CreateAt      time.Time `db:"create_at"`      // 创建时间
 		UpdateAt      time.Time `db:"update_at"`      // 更新时间
 	}
@@ -77,11 +78,11 @@ func (m *defaultReviewModel) Delete(ctx context.Context, id uint64) error {
 	}
 
 	reviewIdKey := fmt.Sprintf("%s%v", cacheReviewIdPrefix, id)
-	reviewUidStoreIdSkuOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheReviewUidStoreIdSkuOrderIdPrefix, data.Uid, data.StoreId, data.Sku, data.OrderId)
+	reviewReviewIdKey := fmt.Sprintf("%s%v", cacheReviewReviewIdPrefix, data.ReviewId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, reviewIdKey, reviewUidStoreIdSkuOrderIdKey)
+	}, reviewIdKey, reviewReviewIdKey)
 	return err
 }
 
@@ -102,12 +103,12 @@ func (m *defaultReviewModel) FindOne(ctx context.Context, id uint64) (*Review, e
 	}
 }
 
-func (m *defaultReviewModel) FindOneByUidStoreIdSkuOrderId(ctx context.Context, uid uint64, storeId uint64, sku string, orderId uint64) (*Review, error) {
-	reviewUidStoreIdSkuOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheReviewUidStoreIdSkuOrderIdPrefix, uid, storeId, sku, orderId)
+func (m *defaultReviewModel) FindOneByReviewId(ctx context.Context, reviewId uint64) (*Review, error) {
+	reviewReviewIdKey := fmt.Sprintf("%s%v", cacheReviewReviewIdPrefix, reviewId)
 	var resp Review
-	err := m.QueryRowIndexCtx(ctx, &resp, reviewUidStoreIdSkuOrderIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `uid` = ? and `store_id` = ? and `sku` = ? and `order_id` = ? limit 1", reviewRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, uid, storeId, sku, orderId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, reviewReviewIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `review_id` = ? limit 1", reviewRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, reviewId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -124,11 +125,11 @@ func (m *defaultReviewModel) FindOneByUidStoreIdSkuOrderId(ctx context.Context, 
 
 func (m *defaultReviewModel) Insert(ctx context.Context, data *Review) (sql.Result, error) {
 	reviewIdKey := fmt.Sprintf("%s%v", cacheReviewIdPrefix, data.Id)
-	reviewUidStoreIdSkuOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheReviewUidStoreIdSkuOrderIdPrefix, data.Uid, data.StoreId, data.Sku, data.OrderId)
+	reviewReviewIdKey := fmt.Sprintf("%s%v", cacheReviewReviewIdPrefix, data.ReviewId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, reviewRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Uid, data.StoreId, data.Sku, data.OrderId, data.Score, data.GoodsDesc, data.HasImage, data.ImageJson, data.StoreScore, data.IsReply, data.Status, data.OpReason, data.GoodsSnapshot, data.IsDel)
-	}, reviewIdKey, reviewUidStoreIdSkuOrderIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, reviewRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ReviewId, data.Uid, data.OrderId, data.StoreId, data.Sku, data.Score, data.GoodsDesc, data.HasImage, data.ImageJson, data.StoreScore, data.IsReply, data.Status, data.OpReason, data.GoodsSnapshot, data.IsDel)
+	}, reviewIdKey, reviewReviewIdKey)
 	return ret, err
 }
 
@@ -139,11 +140,11 @@ func (m *defaultReviewModel) Update(ctx context.Context, newData *Review) error 
 	}
 
 	reviewIdKey := fmt.Sprintf("%s%v", cacheReviewIdPrefix, data.Id)
-	reviewUidStoreIdSkuOrderIdKey := fmt.Sprintf("%s%v:%v:%v:%v", cacheReviewUidStoreIdSkuOrderIdPrefix, data.Uid, data.StoreId, data.Sku, data.OrderId)
+	reviewReviewIdKey := fmt.Sprintf("%s%v", cacheReviewReviewIdPrefix, data.ReviewId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, reviewRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Uid, newData.StoreId, newData.Sku, newData.OrderId, newData.Score, newData.GoodsDesc, newData.HasImage, newData.ImageJson, newData.StoreScore, newData.IsReply, newData.Status, newData.OpReason, newData.GoodsSnapshot, newData.IsDel, newData.Id)
-	}, reviewIdKey, reviewUidStoreIdSkuOrderIdKey)
+		return conn.ExecCtx(ctx, query, newData.ReviewId, newData.Uid, newData.OrderId, newData.StoreId, newData.Sku, newData.Score, newData.GoodsDesc, newData.HasImage, newData.ImageJson, newData.StoreScore, newData.IsReply, newData.Status, newData.OpReason, newData.GoodsSnapshot, newData.IsDel, newData.Id)
+	}, reviewIdKey, reviewReviewIdKey)
 	return err
 }
 

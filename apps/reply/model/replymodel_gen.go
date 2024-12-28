@@ -41,17 +41,18 @@ type (
 	}
 
 	Reply struct {
-		Id           uint64    `db:"id"`            // 回复id
+		Id           uint64    `db:"id"`            // id
+		ReplyId      uint64    `db:"reply_id"`      // 回复id
 		Mid          uint64    `db:"mid"`           // 商家id
 		StoreId      uint64    `db:"store_id"`      // 店铺id
 		Sku          uint64    `db:"sku"`           // sku
 		ReviewId     uint64    `db:"review_id"`     // 评价id
 		ReplyContent string    `db:"reply_content"` // 回复内容
-		HasImage     byte      `db:"has_image"`     // 0无/1有
+		HasImage     uint64    `db:"has_image"`     // 0无/1有
 		ImageJson    string    `db:"image_json"`    // image json
 		Status       uint64    `db:"status"`        // 状态:10待审核；20审核通过；30审核不通过；40隐藏
 		OpReason     string    `db:"op_reason"`     // 运营审核拒绝原因
-		IsDel        byte      `db:"is_del"`        // 0否/1是
+		IsDel        uint64    `db:"is_del"`        // 0否/1是
 		CreateAt     time.Time `db:"create_at"`     // 创建时间
 		UpdateAt     time.Time `db:"update_at"`     // 更新时间
 	}
@@ -93,8 +94,8 @@ func (m *defaultReplyModel) FindOne(ctx context.Context, id uint64) (*Reply, err
 func (m *defaultReplyModel) Insert(ctx context.Context, data *Reply) (sql.Result, error) {
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, replyRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, replyRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ReplyId, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel)
 	}, replyIdKey)
 	return ret, err
 }
@@ -103,7 +104,7 @@ func (m *defaultReplyModel) Update(ctx context.Context, data *Reply) error {
 	replyIdKey := fmt.Sprintf("%s%v", cacheReplyIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, replyRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel, data.Id)
+		return conn.ExecCtx(ctx, query, data.ReplyId, data.Mid, data.StoreId, data.Sku, data.ReviewId, data.ReplyContent, data.HasImage, data.ImageJson, data.Status, data.OpReason, data.IsDel, data.Id)
 	}, replyIdKey)
 	return err
 }

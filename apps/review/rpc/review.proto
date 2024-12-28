@@ -1,3 +1,82 @@
 syntax = "proto3";
 
-package template;
+package pb;
+
+option go_package="./pb";
+
+enum ScoreLevel{
+  UnKnow = 0;
+  PoorLevel = 1;
+  NormalLevel = 2;
+  GoodLevel = 3;
+}
+
+message ReviewInfo{
+  uint64 Uid = 1;
+  uint64 OrderId = 2;
+  uint64 StoreId = 3;
+  string Sku = 4;
+  ScoreLevel Level = 5;
+  string GoodsDesc = 6;
+  bool HasImage = 7;
+  string ImageCDN = 8;
+  uint32 StoreScore = 9; //店铺评分
+  uint64 Status = 10;
+  uint32 IsDel = 11;
+  string CreateAt = 12;
+  uint64 ReviewId = 13;
+}
+
+message ProposeReviewReq{
+  uint64 Uid = 1;
+  uint64 OrderId = 2;
+  uint64 StoreId = 3;
+  string Sku = 4;
+  ScoreLevel Level = 5;
+  string GoodsDesc = 6;
+  bool HasImage = 7;
+  string ImageCDN = 8;
+  uint32 StoreScore = 9; //店铺评分
+}
+
+message ProposeReviewResp{
+  uint64 ReviewId = 1;
+  uint32 Status = 2;
+}
+
+message ReviewByUidReq{
+  uint64 Uid = 1;
+}
+
+message ReviewByUidResp{
+  repeated ReviewInfo Infos = 1;
+}
+
+message ReviewBySSkuReq{
+  uint64 StoreId = 1;
+  string Sku = 2;
+}
+
+message ReviewBySSkuResp{
+  repeated ReviewInfo Infos = 1;
+}
+
+message ReviewByReviewIdReq{
+  uint64 ReviewId = 1;
+}
+
+message ReviewByReviewIdResp{
+  ReviewInfo Info = 1;
+}
+
+service Review{
+  //发表评论
+  rpc ProposeReview(ProposeReviewReq) returns(ProposeReviewResp);
+  //查找某一用户的评论
+  rpc ReviewByUid(ReviewByUidReq) returns(ReviewByUidResp);
+  //查找某一款商品的评论
+  rpc ReviewBySSku(ReviewBySSkuReq) returns(ReviewBySSkuResp);
+  //查找某一条评论的信息
+  rpc ReviewByReviewId(ReviewByReviewIdReq) returns(ReviewByReviewIdResp);
+}
+
