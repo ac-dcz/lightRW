@@ -4,7 +4,8 @@
 package types
 
 type CreateOrderReq struct {
-	Entries []OrderEntry `json:"entries"`
+	Entries []OrderEntry `json:"entries" validate:"required"`
+	Token   string       `json:"token,optional"`
 }
 
 type CreateOrderResp struct {
@@ -13,13 +14,14 @@ type CreateOrderResp struct {
 }
 
 type OrderEntry struct {
-	StoreId uint64 `json:"store_id"`
-	Sku     string `json:"sku"`
-	Nums    int32  `json:"nums"`
+	StoreId uint64 `json:"store_id" validate:"required`
+	Sku     string `json:"sku" validate:"required`
+	Nums    int32  `json:"nums" validate:"required`
 }
 
 type OrderInfoReq struct {
-	OrderId uint64 `json:"order_id"`
+	OrderId uint64 `json:"order_id" validate:"required`
+	Token   string `json:"token,optional"`
 }
 
 type OrderInfoResp struct {
@@ -32,7 +34,8 @@ type OrderInfoResp struct {
 }
 
 type PayOrderReq struct {
-	OrderId uint64 `json:"order_id"`
+	OrderId uint64 `json:"order_id" validate:"required`
+	Token   string `json:"token,optional"`
 }
 
 type PayOrderResp struct {

@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	stderr "errors"
+	"github.com/ac-dcz/lightRW/apps/review/model"
 	"github.com/ac-dcz/lightRW/common/codes"
 	"github.com/ac-dcz/lightRW/common/errors"
 
@@ -29,6 +31,9 @@ func NewReviewByReviewIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *ReviewByReviewIdLogic) ReviewByReviewId(in *pb.ReviewByReviewIdReq) (*pb.ReviewByReviewIdResp, error) {
 
 	info, err := l.svcCtx.ReviewModel.FindOneByReviewId(l.ctx, in.ReviewId)
+	if stderr.Is(err, model.ErrNotFound) {
+		return nil, errors.New(codes.NotFoundReview, "not found review")
+	}
 	if err != nil {
 		l.Errorf("FindOneByReviewId err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())

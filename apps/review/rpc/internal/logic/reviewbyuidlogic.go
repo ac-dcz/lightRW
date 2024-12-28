@@ -33,9 +33,7 @@ func (l *ReviewByUidLogic) ReviewByUid(in *pb.ReviewByUidReq) (*pb.ReviewByUidRe
 	datas, err := l.svcCtx.ReviewModel.FindManyByUid(l.ctx, in.Uid)
 
 	if stderr.Is(err, model.ErrNotFound) {
-		return &pb.ReviewByUidResp{
-			Infos: nil,
-		}, nil
+		return nil, errors.New(codes.NotFoundReview, "not found review")
 	} else if err != nil {
 		l.Errorf("FindManyBySSku err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())

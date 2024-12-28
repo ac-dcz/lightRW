@@ -11,6 +11,7 @@ const (
 	InvalidToken        Code = 102
 	InvalidTokenPayLoad Code = 103
 	BuildTokenError     Code = 104
+	RateLimit           Code = 105
 )
 
 // for verify code
@@ -44,4 +45,20 @@ const (
 	OrderNotFound Code = 50000 + iota
 	OrderPayed
 	OrderExpire
+	InvalidStoreIdAndSku
+	StockNotEnough
+)
+
+// for review
+const (
+	InvalidOrderStatus Code = 60000 + iota
+	SkuNotInOrder
+	NotFoundReview
+)
+
+// for reply
+const (
+	ReviewNotPassAudit Code = 70000 + iota
+	InvalidSSku
+	NotFoundReply
 )

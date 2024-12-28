@@ -32,9 +32,7 @@ func (l *ReviewBySSkuLogic) ReviewBySSku(in *pb.ReviewBySSkuReq) (*pb.ReviewBySS
 
 	datas, err := l.svcCtx.ReviewModel.FindManyBySSku(l.ctx, in.StoreId, in.Sku)
 	if stderr.Is(err, model.ErrNotFound) {
-		return &pb.ReviewBySSkuResp{
-			Infos: nil,
-		}, nil
+		return nil, errors.New(codes.NotFoundReview, "not found review")
 	} else if err != nil {
 		l.Errorf("FindManyBySSku err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())

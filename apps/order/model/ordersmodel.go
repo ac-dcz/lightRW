@@ -1,6 +1,8 @@
 package model
 
 import (
+	"database/sql"
+	stderr "errors"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -33,12 +35,22 @@ func NewOrdersModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) 
 }
 
 func (m *customOrdersModel) InsertWithTx(ctx context.Context, orders ...*Orders) error {
-	query := fmt.Sprintf("insert into %s(%s) values(?, ?, ?, ?, ?, ?, ?)", m.table, ordersRowsExpectAutoSet)
+	gstoreTable, ok := ctx.Value("goods_store").(string)
+	if !ok {
+		return fmt.Errorf("not found goods_store table name")
+	}
+
+	query1 := fmt.Sprintf("update %s set stock = stock - ? where store_id = ? and sku = ?", gstoreTable)
+	query2 := fmt.Sprintf("insert into %s(%s) values(?, ?, ?, ?, ?, ?, ?)", m.table, ordersRowsExpectAutoSet)
 
 	err := m.CachedConn.TransactCtx(ctx, func(ctx context.Context, session sqlx.Session) error {
 		for _, data := range orders {
+			//减库存
+			if _, err := session.ExecCtx(ctx, query1, data.Num, data.StoreId, data.Sku); err != nil {
+				return err
+			}
 			// 插入新数据 不会破会缓存一致性
-			if _, err := session.ExecCtx(ctx, query, data.OrderId, data.Uid,
+			if _, err := session.ExecCtx(ctx, query2, data.OrderId, data.Uid,
 				data.StoreId, data.Sku, data.Num, data.Price, data.Status); err != nil {
 				return err
 			}
@@ -52,6 +64,9 @@ func (m *customOrdersModel) FindOneByOrderId(ctx context.Context, orderId uint64
 	var data Orders
 	query := fmt.Sprintf("select %s from %s where orderId = ?", ordersRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &data, query, orderId); err != nil {
+		if stderr.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 	return &data, nil
@@ -70,6 +85,9 @@ func (m *customOrdersModel) FindOrdersByOrderIdUId(ctx context.Context, orderId,
 	var datas []*Orders
 	query := fmt.Sprintf("select %s from %s where orderId = ? and uId = ?", ordersRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &datas, query, orderId, uId); err != nil {
+		if stderr.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
 		return nil, err
 	}
 	return datas, nil

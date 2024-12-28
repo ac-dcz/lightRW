@@ -75,6 +75,7 @@ func (l *ProposeReviewLogic) ProposeReview(in *pb.ProposeReviewReq) (*pb.Propose
 		StoreScore: uint64(in.StoreScore),
 		HasImage:   uint64(utils.BoolToInt(in.HasImage)),
 		ImageJson:  in.ImageCDN,
+		Status:     model.AuditIng,
 	}
 	if _, err := l.svcCtx.ReviewModel.Insert(l.ctx, review); err != nil {
 		l.Errorf("review model insert error: %v", err)

@@ -10,6 +10,7 @@ type (
 	GoodsStoreModel interface {
 		goodsStoreModel
 		withSession(session sqlx.Session) GoodsStoreModel
+		TableName() string
 	}
 
 	customGoodsStoreModel struct {
@@ -26,4 +27,8 @@ func NewGoodsStoreModel(conn sqlx.SqlConn) GoodsStoreModel {
 
 func (m *customGoodsStoreModel) withSession(session sqlx.Session) GoodsStoreModel {
 	return NewGoodsStoreModel(sqlx.NewSqlConnFromSession(session))
+}
+
+func (m *customGoodsStoreModel) TableName() string {
+	return m.table
 }

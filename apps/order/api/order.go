@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/ac-dcz/lightRW/common/http"
+	"github.com/go-playground/validator/v10"
+	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"github.com/ac-dcz/lightRW/apps/order/api/internal/config"
 	"github.com/ac-dcz/lightRW/apps/order/api/internal/handler"
@@ -25,7 +28,10 @@ func main() {
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
-
+	httpx.SetErrorHandler(http.ErrorHandler())
+	httpx.SetOkHandler(http.OkHandler())
+	httpx.SetValidator(http.ValidateHandler(validator.WithRequiredStructEnabled()))
+	
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

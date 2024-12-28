@@ -1,3 +1,17 @@
 Name: order-api
 Host: 0.0.0.0
-Port: 8888
+Port: 9030
+
+Auth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+RateLimitConf:
+  Rate: 10
+  Size: 20
+  
+OrderRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: order.rpc
