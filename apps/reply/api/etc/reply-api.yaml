@@ -1,0 +1,18 @@
+Name: reply-api
+Host: 0.0.0.0
+Port: 9050
+
+Auth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
+RateLimitConf:
+  Rate: 10
+  Size: 20
+
+
+ReplyRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: reply.rpc

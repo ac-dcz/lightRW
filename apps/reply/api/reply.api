@@ -1,9 +1,83 @@
 syntax = "v1"
 
-info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+info (
+	title:   "reply api"
+	desc:    "reply api file"
+	author:  "reply "
+	email:   "type email here"
+	version: "type version here"
 )
+
+type ReplyInfo {
+	Mid      uint64 `json:"mid"`
+	ReviewId uint64 `json:"review_id"`
+	StoreId  uint64 `json:"store_id"`
+	Sku      string `json:"sku"`
+	Content  string `json:"content"`
+	HasImage uint32 `json:"has_image"`
+	ImageCDN string `json:"image_cdn"`
+	ReplyId  uint64 `json:"reply_id"`
+	Status   uint8  `json:"status"`
+	CreateAt string `json:"create_at"`
+	IsDel    uint8  `json:"is_del"`
+}
+
+type (
+	ProposeReplyReq {
+		ReviewId uint64 `json:"review_id" validate:"required`
+		StoreId  uint64 `json:"store_id" validate:"required`
+		Sku      string `json:"sku" validate:"required`
+		Content  string `json:"content" validate:"required`
+		HasImage uint8  `json:"has_image" validate:"required`
+		ImageDSN string `json:"image_dsn" validate:"required`
+	}
+	ProposeReplyResp {
+		ReplyId uint64 `json:"reply_id"`
+		Status  uint8  `json:"status"`
+	}
+	ReplyBySSkuReq {
+		StoreId uint64 `json:"store_id" validate:"required"`
+		Sku     string `json:"sku" validate:"required`
+	}
+	ReplyBySSkuResp {
+		Infos []ReplyInfo `json:"infos"`
+	}
+	ReplyByReviewIdReq {
+		ReviewId uint64 `json:"review_id" validate:"required`
+	}
+	ReplyByReviewIdResp {
+		Infos []ReplyInfo `json:"infos"`
+	}
+	ReplyByReplyIdReq {
+		ReplyId uint64 `json:"reply_id" validate:"required`
+	}
+	ReplyByReplyIdResp {
+		Info ReplyInfo `json:"info"`
+	}
+	ReplyByMidResp {
+		Infos []ReplyInfo `json:"infos"`
+	}
+)
+
+@server (
+	jwt:        Auth
+	middleware: RateLimit
+	prefix:     /api/v1/reply
+)
+service reply-api {
+	@handler ProposeReply
+	post /propose (ProposeReplyReq) returns (ProposeReplyResp)
+
+	@handler ReplyBySSku
+	get /get/ssku (ReplyBySSkuReq) returns (ReplyBySSkuResp)
+
+	@handler ReplyByReviewId
+	get /get/reviewid (ReplyByReviewIdReq) returns (ReplyByReviewIdResp)
+
+	@handler ReplyByReplyId
+	get /get/replyid (ReplyByReplyIdReq) returns (ReplyByReplyIdResp)
+
+	@handler ReplyByMid
+	get /get/mid returns (ReplyByMidResp)
+}
+
