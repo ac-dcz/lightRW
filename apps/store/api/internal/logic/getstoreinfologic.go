@@ -32,6 +32,13 @@ func (l *GetStoreInfoLogic) GetStoreInfo(req *types.StoreInfoReq) (resp *types.S
 		l.Error(err)
 		return nil, err
 	} else {
+		goodsInfos := make([]types.GoodsInfo, 0)
+		for _, goods := range info.Info.GoodsInfos {
+			goodsInfos = append(goodsInfos, types.GoodsInfo{
+				Sku:   goods.Sku,
+				Stock: goods.Stock,
+			})
+		}
 		resp = &types.StoreInfoResp{
 			StoreInfo: types.StoreInfo{
 				StoreId:    info.Info.StoreId,
@@ -39,6 +46,7 @@ func (l *GetStoreInfoLogic) GetStoreInfo(req *types.StoreInfoReq) (resp *types.S
 				Id:         info.Info.Id,
 				CreateDate: info.Info.CreateDate,
 				Uid:        info.Info.Uid,
+				GoodsInfos: goodsInfos,
 			},
 		}
 	}

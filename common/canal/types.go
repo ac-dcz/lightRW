@@ -11,11 +11,12 @@ const (
 )
 
 type Column struct {
-	Name     string `json:"name"`
-	Value    string `json:"value"`
-	IsUpdate bool   `json:"is_update"`
-	IsNull   bool   `json:"is_null"`
-	IsKey    bool   `json:"is_key"`
+	Name      string `json:"name"`
+	Value     any    `json:"value"`
+	MySqlType string `json:"mysql_type"`
+	IsUpdate  bool   `json:"is_update"`
+	IsNull    bool   `json:"is_null"`
+	IsKey     bool   `json:"is_key"`
 }
 
 type Record struct {

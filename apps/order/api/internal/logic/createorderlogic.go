@@ -31,7 +31,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (resp *types.C
 	t, _ := l.ctx.Value("uid").(string)
 	uid, _ := strconv.ParseUint(t, 10, 64)
 
-	entries := make([]*order.OrderEntry, len(req.Entries))
+	entries := make([]*order.OrderEntry, 0)
 	for _, entry := range req.Entries {
 		entries = append(entries, &order.OrderEntry{
 			StoreId: entry.StoreId,

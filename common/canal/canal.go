@@ -7,16 +7,19 @@ import (
 	pbe "github.com/withlin/canal-go/protocol/entry"
 	"github.com/zeromicro/go-zero/core/logx"
 	"google.golang.org/protobuf/proto"
+	"strconv"
+	"strings"
 	"time"
 )
 
 type ClientConf struct {
-	Host        string
-	Port        int
-	User        string
-	Pass        string
-	Destination string
-	Subscribe   string
+	Host        string `json:",optional,default=127.0.0.1"`
+	Port        int    `json:",optional,default=11111"`
+	User        string `json:",optional"`
+	Pass        string `json:",optional"`
+	Destination string `json:",optional,default=example"`
+	Subscribe   string `json:",optional,default=.*\\..*"`
+	ClientId    int    `json:",optional,default=1001"`
 }
 
 type Client struct {
@@ -34,6 +37,8 @@ func NewClient(c *ClientConf) (*Client, error) {
 		60000,
 		60*60*1000,
 	)
+
+	canalConn.ClientIdentity.ClientId = c.ClientId
 	if err := canalConn.Connect(); err != nil {
 		return nil, err
 	}
@@ -50,7 +55,7 @@ func (c *Client) Close() error {
 	return c.conn.DisConnection()
 }
 
-func (c *Client) Run(ctx context.Context, handle func(record ...*Record) error) error {
+func (c *Client) Run(ctx context.Context, handle func(records ...*Record) error) error {
 
 	errChan := make(chan error, 1)
 	msgChan := make(chan *protocol.Message, 100)
@@ -85,7 +90,11 @@ func (c *Client) Run(ctx context.Context, handle func(record ...*Record) error) 
 		case err := <-errChan:
 			close(done)
 			return err
-		case msg := <-msgChan:
+		case msg, ok := <-msgChan:
+			if !ok {
+				return nil
+			}
+			logx.Debugf("canal entry msg id: %v", msg.Id)
 			if records, err := c.parseMsg(msg); err != nil {
 				return err
 			} else {
@@ -102,20 +111,8 @@ func (c *Client) Run(ctx context.Context, handle func(record ...*Record) error) 
 
 func (c *Client) parseMsg(msg *protocol.Message) ([]*Record, error) {
 
-	var parseRowData = func(datas []*pbe.Column) []*Column {
-		columns := make([]*Column, len(datas))
-		for i, data := range datas {
-			columns[i] = &Column{
-				Name:     data.Name,
-				Value:    data.Value,
-				IsNull:   data.GetIsNull(),
-				IsUpdate: data.GetUpdated(),
-				IsKey:    data.GetIsKey(),
-			}
-		}
-		return columns
-	}
 	records := make([]*Record, 0)
+
 	for i := range msg.Entries {
 		entry := &msg.Entries[i]
 		if entry.GetEntryType() == pbe.EntryType_TRANSACTIONBEGIN || entry.GetEntryType() == pbe.EntryType_TRANSACTIONEND {
@@ -136,19 +133,54 @@ func (c *Client) parseMsg(msg *protocol.Message) ([]*Record, error) {
 			switch eventType {
 			case pbe.EventType_DELETE:
 				record.Type = DeleteType
-				record.BeforeColumns = parseRowData(row.GetBeforeColumns())
+				record.BeforeColumns = c.parseRowData(row.GetBeforeColumns())
 			case pbe.EventType_INSERT:
 				record.Type = InsertType
-				record.AfterColumns = parseRowData(row.GetAfterColumns())
+				record.AfterColumns = c.parseRowData(row.GetAfterColumns())
 			case pbe.EventType_UPDATE:
 				record.Type = UpdateType
-				record.BeforeColumns = parseRowData(row.GetBeforeColumns())
-				record.AfterColumns = parseRowData(row.GetAfterColumns())
+				record.BeforeColumns = c.parseRowData(row.GetBeforeColumns())
+				record.AfterColumns = c.parseRowData(row.GetAfterColumns())
 			default:
 				//not attention
 			}
 			records = append(records, record)
 		}
 	}
+
 	return records, nil
+}
+
+func (c *Client) parseRowData(datas []*pbe.Column) []*Column {
+	columns := make([]*Column, len(datas))
+	for i, data := range datas {
+		columns[i] = &Column{
+			Name:      data.Name,
+			Value:     convertMysqlTypeToGo(data.MysqlType, data.Value),
+			MySqlType: data.MysqlType,
+			IsNull:    data.GetIsNull(),
+			IsUpdate:  data.GetUpdated(),
+			IsKey:     data.GetIsKey(),
+		}
+	}
+	return columns
+}
+
+func convertMysqlTypeToGo(mysqlType, value string) any {
+	if strings.HasPrefix(mysqlType, "tinyint") ||
+		strings.HasPrefix(mysqlType, "int") ||
+		strings.HasPrefix(mysqlType, "bigint") ||
+		strings.HasPrefix(mysqlType, "smallint") {
+		if v, err := strconv.ParseInt(value, 10, 64); err == nil {
+			return v
+		}
+	}
+	if strings.HasPrefix(mysqlType, "decimal") ||
+		strings.HasPrefix(mysqlType, "float") ||
+		strings.HasPrefix(mysqlType, "double") {
+		if v, err := strconv.ParseFloat(value, 64); err == nil {
+			return v
+		}
+	}
+	return value
 }

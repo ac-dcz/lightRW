@@ -63,7 +63,7 @@ func (l *CreateOrderLogic) CreateOrder(in *pb.CreateOrderReq) (*pb.CreateOrderRe
 		_, _ = l.svcCtx.BizLocker.ReleaseCtx(l.ctx)
 	}()
 
-	orders := make([]*model.Orders, len(in.Entries))
+	orders := make([]*model.Orders, 0)
 	for _, entry := range in.Entries {
 		if gs, err := l.svcCtx.GStoreModel.FindOneByStoreIdSku(l.ctx, entry.StoreId, entry.Sku); stderr.Is(err, gmodel.ErrNotFound) {
 			return nil, errors.New(codes.InvalidStoreIdAndSku, "invalid store id and sku")

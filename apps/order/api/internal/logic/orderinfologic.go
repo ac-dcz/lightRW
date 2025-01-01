@@ -38,7 +38,7 @@ func (l *OrderInfoLogic) OrderInfo(req *types.OrderInfoReq) (resp *types.OrderIn
 		l.Error(err)
 		return nil, err
 	} else {
-		entries := make([]types.OrderEntry, len(r.Entries))
+		entries := make([]types.OrderEntry, 0)
 		for _, entry := range r.Entries {
 			entries = append(entries, types.OrderEntry{
 				StoreId: entry.StoreId,

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	stderr "errors"
+	gmodel "github.com/ac-dcz/lightRW/apps/goods/model"
 	"github.com/ac-dcz/lightRW/apps/store/model"
 	"github.com/ac-dcz/lightRW/common/codes"
 	"github.com/ac-dcz/lightRW/common/errors"
@@ -30,6 +31,7 @@ func NewGetStoreInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetS
 
 func (l *GetStoreInfoLogic) GetStoreInfo(in *pb.StoreInfoReq) (*pb.StoreInfoResp, error) {
 
+	//Step1: find store
 	if data, err := l.svcCtx.StoreModel.FindOneByStoreId(l.ctx, in.StoreId); stderr.Is(err, model.ErrNotFound) {
 		l.Logger.Errorf("GetStoreInfoLogic.findOneByStoreId err: %v", err)
 		return nil, errors.New(codes.StoreNotRegistry, "store nor registry")
@@ -37,6 +39,20 @@ func (l *GetStoreInfoLogic) GetStoreInfo(in *pb.StoreInfoReq) (*pb.StoreInfoResp
 		l.Logger.Errorf("GetStoreInfoLogic.findOneByStoreId err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())
 	} else {
+		//Step2: find goods in store
+		goods, err := l.svcCtx.GoodsStoreModel.FindManyByStoreId(l.ctx, in.StoreId)
+		if err != nil && !stderr.Is(err, gmodel.ErrNotFound) {
+			l.Errorf("GetStoreInfoLogic.findOneByStoreId err: %v", err)
+			return nil, errors.New(codes.InternalError, err.Error())
+		}
+		infos := make([]*pb.GoodsInfo, 0)
+		for _, item := range goods {
+			infos = append(infos, &pb.GoodsInfo{
+				Sku:   item.Sku,
+				Stock: item.Stock,
+			})
+		}
+
 		return &pb.StoreInfoResp{
 			Info: &pb.StoreInfo{
 				Id:         data.Id,
@@ -44,6 +60,7 @@ func (l *GetStoreInfoLogic) GetStoreInfo(in *pb.StoreInfoReq) (*pb.StoreInfoResp
 				Name:       data.Name,
 				Uid:        data.Uid,
 				CreateDate: data.CreateAt.Format(time.DateTime),
+				GoodsInfos: infos,
 			},
 		}, nil
 	}

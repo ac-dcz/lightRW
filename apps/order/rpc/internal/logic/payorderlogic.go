@@ -30,12 +30,13 @@ func (l *PayOrderLogic) PayOrder(in *pb.PayOrderReq) (*pb.PayOrderResp, error) {
 
 	//Step1: 判断订单是否存在
 	order, err := l.svcCtx.OrderModel.FindOneByOrderId(l.ctx, in.OrderId)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || order == nil {
 		return nil, errors.New(codes.OrderNotFound, "order not found")
 	} else if err != nil {
 		l.Errorf("PayOrder err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())
 	} else if order.Status == model.Pay {
+		l.Errorf("PayOrder already pay order: %v", order.OrderId)
 		return nil, errors.New(codes.OrderPayed, "order has been pay already")
 	} else if order.Status == model.Expired {
 		return nil, errors.New(codes.OrderExpire, "order expired")
@@ -50,5 +51,6 @@ func (l *PayOrderLogic) PayOrder(in *pb.PayOrderReq) (*pb.PayOrderResp, error) {
 
 	return &pb.PayOrderResp{
 		OrderId: in.OrderId,
+		Status:  int32(model.Pay),
 	}, nil
 }

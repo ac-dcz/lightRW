@@ -26,6 +26,7 @@ var (
 
 	cacheOrdersIdPrefix                   = "cache:orders:id:"
 	cacheOrdersOrderIdUidStoreIdSkuPrefix = "cache:orders:orderId:uid:storeId:sku:"
+	cacheOrdersOrderIdPrefix = "cache:orders:orderId:"
 )
 
 type (

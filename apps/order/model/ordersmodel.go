@@ -5,8 +5,10 @@ import (
 	stderr "errors"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"golang.org/x/net/context"
+	"strconv"
 )
 
 var _ OrdersModel = (*customOrdersModel)(nil)
@@ -62,9 +64,12 @@ func (m *customOrdersModel) InsertWithTx(ctx context.Context, orders ...*Orders)
 
 func (m *customOrdersModel) FindOneByOrderId(ctx context.Context, orderId uint64) (*Orders, error) {
 	var data Orders
-	query := fmt.Sprintf("select %s from %s where orderId = ?", ordersRows, m.table)
-	if err := m.QueryRowsNoCacheCtx(ctx, &data, query, orderId); err != nil {
-		if stderr.Is(err, sql.ErrNoRows) {
+	key := cacheOrdersOrderIdPrefix + strconv.FormatUint(orderId, 10)
+	query := fmt.Sprintf("select %s from %s where order_id = ?", ordersRows, m.table)
+	if err := m.QueryRowCtx(ctx, &data, key, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
+		return conn.QueryRowCtx(ctx, v, query, orderId)
+	}); err != nil {
+		if stderr.Is(err, sqlc.ErrNotFound) {
 			return nil, ErrNotFound
 		}
 		return nil, err
@@ -73,8 +78,11 @@ func (m *customOrdersModel) FindOneByOrderId(ctx context.Context, orderId uint64
 }
 
 func (m *customOrdersModel) UpdateOrdersForStatus(ctx context.Context, orderId, uId, status uint64) (int64, error) {
-	query := fmt.Sprintf("update %s set status=? where orderId = ? and uId = ? and status = 0", m.table)
-	r, err := m.ExecNoCacheCtx(ctx, query, status, orderId, uId)
+	key := cacheOrdersOrderIdPrefix + strconv.FormatUint(orderId, 10)
+	query := fmt.Sprintf("update %s set status=? where order_id = ? and uid = ? and status = 0", m.table)
+	r, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
+		return conn.ExecCtx(ctx, query, status, orderId, uId)
+	}, key)
 	if err != nil {
 		return 0, err
 	}
@@ -83,9 +91,9 @@ func (m *customOrdersModel) UpdateOrdersForStatus(ctx context.Context, orderId, 
 
 func (m *customOrdersModel) FindOrdersByOrderIdUId(ctx context.Context, orderId, uId uint64) ([]*Orders, error) {
 	var datas []*Orders
-	query := fmt.Sprintf("select %s from %s where orderId = ? and uId = ?", ordersRows, m.table)
+	query := fmt.Sprintf("select %s from %s where order_id = ? and uid = ?", ordersRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &datas, query, orderId, uId); err != nil {
-		if stderr.Is(err, sql.ErrNoRows) {
+		if stderr.Is(err, sqlc.ErrNotFound) {
 			return nil, ErrNotFound
 		}
 		return nil, err

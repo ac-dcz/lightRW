@@ -5,6 +5,11 @@ package pb;
 
 option go_package = "./pb";
 
+message GoodsInfo{
+  string Sku = 1;
+  uint64 Stock = 2;
+}
+
 message StoreInfo {
   uint64 Id = 1;
   uint64 StoreId = 2;
@@ -12,6 +17,7 @@ message StoreInfo {
   uint64 Uid = 4;
   string CreateDate = 5;
   uint64 Status = 6;
+  repeated GoodsInfo GoodsInfos = 7;
 }
 
 message RegistryStoreReq{

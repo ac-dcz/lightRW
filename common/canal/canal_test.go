@@ -22,14 +22,15 @@ func TestClient_Run(t *testing.T) {
 		Host:        "127.0.0.1",
 		Port:        11111,
 		Destination: "example",
-		Subscribe:   "canal_test\\..*",
+		Subscribe:   "gozero_review\\.review",
+		ClientId:    1001,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer client.Close()
 
-	t.Fatal(client.Run(context.Background(), kafkaTestLogic))
+	t.Fatal(client.Run(context.Background(), consumerTestLogic))
 }
 
 func consumerTestLogic(records ...*Record) error {
@@ -40,17 +41,22 @@ func consumerTestLogic(records ...*Record) error {
 		fmt.Println(">>> BeforeColumns:")
 		for _, column := range record.BeforeColumns {
 			fmt.Printf("\t name: %s \n", column.Name)
-			fmt.Printf("\t value: %s \n", column.Value)
+			fmt.Printf("\t value: %v \n", column.Value)
 			fmt.Printf("\t isnull: %v \n", column.IsNull)
 			fmt.Printf("\t isupdate: %v \n", column.IsUpdate)
+			fmt.Printf("\t mysql_value: %s \n", column.MySqlType)
 		}
 		fmt.Println()
 		fmt.Println(">>> AfterColumns:")
 		for _, column := range record.AfterColumns {
 			fmt.Printf("\t name: %s \n", column.Name)
-			fmt.Printf("\t value: %s \n", column.Value)
+			fmt.Printf("\t value: %v \n", column.Value)
 			fmt.Printf("\t isnull: %v \n", column.IsNull)
 			fmt.Printf("\t isupdate: %v \n", column.IsUpdate)
+			fmt.Printf("\t mysql_value: %s \n", column.MySqlType)
+		}
+		if data, err := record.Encode(); err == nil {
+			fmt.Println(string(data))
 		}
 
 	}

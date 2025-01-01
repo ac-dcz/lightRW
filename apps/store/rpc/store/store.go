@@ -16,6 +16,7 @@ import (
 type (
 	AddGoodsReq       = pb.AddGoodsReq
 	AddGoodsResp      = pb.AddGoodsResp
+	GoodsInfo         = pb.GoodsInfo
 	GoodsStockReq     = pb.GoodsStockReq
 	GoodsStockResp    = pb.GoodsStockResp
 	RegistryStoreReq  = pb.RegistryStoreReq

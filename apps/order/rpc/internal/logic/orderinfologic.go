@@ -29,7 +29,8 @@ func NewOrderInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OrderIn
 func (l *OrderInfoLogic) OrderInfo(in *pb.OrderInfoReq) (*pb.OrderInfoResp, error) {
 
 	datas, err := l.svcCtx.OrderModel.FindOrdersByOrderIdUId(l.ctx, in.OrderId, in.Uid)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || datas == nil || len(datas) == 0 {
+		l.Errorf("not found order")
 		return nil, errors.New(codes.OrderNotFound, "order not found")
 	} else if err != nil {
 		l.Errorf("FindOrdersByOrderIdUId Error: %v", err.Error())
@@ -37,18 +38,19 @@ func (l *OrderInfoLogic) OrderInfo(in *pb.OrderInfoReq) (*pb.OrderInfoResp, erro
 	}
 
 	resp := &pb.OrderInfoResp{}
-	entries := make([]*pb.OrderEntry, len(datas))
+	entries := make([]*pb.OrderEntry, 0)
 	for _, data := range datas {
 		entries = append(entries, &pb.OrderEntry{
 			StoreId: data.StoreId,
 			Sku:     data.Sku,
 			Nums:    int32(data.Num),
 		})
-		resp.Id = data.Id
+		resp.Uid = data.Uid
 		resp.OrderId = data.OrderId
 		resp.Status = int32(data.Status)
 		resp.CreateAt = data.CreateAt.Format("2006-01-02 15:04:05")
 	}
+	resp.Entries = entries
 
 	return resp, nil
 }

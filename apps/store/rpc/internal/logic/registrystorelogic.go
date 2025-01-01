@@ -50,10 +50,11 @@ func (l *RegistryStoreLogic) RegistryStore(in *pb.RegistryStoreReq) (*pb.Registr
 		id, _ := r.LastInsertId()
 		return &pb.RegistryStoreResp{
 			Info: &pb.StoreInfo{
-				Id:      uint64(id),
-				StoreId: data.StoreId,
-				Name:    data.Name,
-				Uid:     data.Uid,
+				Id:         uint64(id),
+				StoreId:    data.StoreId,
+				Name:       data.Name,
+				Uid:        data.Uid,
+				GoodsInfos: nil,
 			},
 		}, nil
 	}

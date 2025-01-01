@@ -10,6 +10,11 @@ type AddGoodsReq struct {
 	Token   string `form:"token,optional"`
 }
 
+type GoodsInfo struct {
+	Sku   string `json:"sku"`
+	Stock uint64 `json:"stock"`
+}
+
 type GoodsStockReq struct {
 	StoreId uint64 `form:"store_id"`
 	Sku     string `form:"sku"`
@@ -29,11 +34,12 @@ type RegistryStoreResp struct {
 }
 
 type StoreInfo struct {
-	Id         uint64 `json:"id"`
-	StoreId    uint64 `json:"store_id"`
-	Name       string `json:"name"`
-	Uid        uint64 `json:"uid"`
-	CreateDate string `json:"create_date"`
+	Id         uint64      `json:"id"`
+	StoreId    uint64      `json:"store_id"`
+	Name       string      `json:"name"`
+	Uid        uint64      `json:"uid"`
+	CreateDate string      `json:"create_date"`
+	GoodsInfos []GoodsInfo `json:"goods_infos"`
 }
 
 type StoreInfoReq struct {

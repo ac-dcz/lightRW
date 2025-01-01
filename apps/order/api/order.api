@@ -56,6 +56,6 @@ service order-api {
 	post /pay (PayOrderReq) returns (PayOrderResp)
 
 	@handler OrderInfo
-	post /info (OrderInfoReq) returns (OrderInfoResp)
+	get /info (OrderInfoReq) returns (OrderInfoResp)
 }
 

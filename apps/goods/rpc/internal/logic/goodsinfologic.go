@@ -29,7 +29,7 @@ func NewGoodsInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GoodsIn
 
 func (l *GoodsInfoLogic) GoodsInfo(in *pb.GoodsInfoReq) (*pb.GoodsInfoResp, error) {
 	goods, err := l.svcCtx.GoodsModel.FindOneBySku(l.ctx, in.Sku)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || goods == nil {
 		return nil, errors.New(codes.SkuNotRegistry, "sku is not registry")
 	} else if err != nil {
 		l.Logger.Errorf("GoodsInfoLogic FindOneBySku err: %v", err)
