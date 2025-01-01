@@ -2,8 +2,8 @@ package server
 
 import (
 	"context"
-	"github.com/ac-dcz/lightRW/apps/review/canal/internal/logic"
-	"github.com/ac-dcz/lightRW/apps/review/canal/internal/svc"
+	"github.com/ac-dcz/lightRW/apps/reply/canal/internal/logic"
+	"github.com/ac-dcz/lightRW/apps/reply/canal/internal/svc"
 )
 
 type Server struct {

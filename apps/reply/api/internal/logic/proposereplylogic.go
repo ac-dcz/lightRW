@@ -38,7 +38,7 @@ func (l *ProposeReplyLogic) ProposeReply(req *types.ProposeReplyReq) (resp *type
 		StoreId:  req.StoreId,
 		Content:  req.Content,
 		HasImage: uint32(req.HasImage),
-		ImageCDN: req.ImageDSN,
+		ImageCDN: req.ImageCDN,
 	}); err != nil {
 		l.Errorf("propose reply rpc error: %v", err)
 		return nil, err

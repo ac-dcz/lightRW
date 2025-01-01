@@ -29,7 +29,7 @@ func NewReplyByReviewIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *R
 
 func (l *ReplyByReviewIdLogic) ReplyByReviewId(in *pb.ReplyByReviewIdReq) (*pb.ReplyByReviewIdResp, error) {
 	replyList, err := l.svcCtx.ReplyModel.FindManyByMid(l.ctx, in.ReviewId)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || replyList == nil || len(replyList) == 0 {
 		return nil, errors.New(codes.NotFoundReply, err.Error())
 	} else if err != nil {
 		l.Errorf(err.Error())

@@ -30,7 +30,7 @@ func NewReplyByReplyIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 func (l *ReplyByReplyIdLogic) ReplyByReplyId(in *pb.ReplyByReplyIdReq) (*pb.ReplyByReplyIdResp, error) {
 
 	reply, err := l.svcCtx.ReplyModel.FindOneByReplyId(l.ctx, in.ReplyId)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || reply == nil {
 		return nil, errors.New(codes.NotFoundReply, "not found reply")
 	} else if err != nil {
 		l.Errorf("FindOneByReplyId err: %v", err)

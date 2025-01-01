@@ -47,3 +47,8 @@ func (s *ReplyServer) ReplyByMid(ctx context.Context, in *pb.ReplyByMidReq) (*pb
 	l := logic.NewReplyByMidLogic(ctx, s.svcCtx)
 	return l.ReplyByMid(in)
 }
+
+func (s *ReplyServer) UpdateStatus(ctx context.Context, in *pb.UpdateStatusReq) (*pb.UpdateStatusResp, error) {
+	l := logic.NewUpdateStatusLogic(ctx, s.svcCtx)
+	return l.UpdateStatus(in)
+}

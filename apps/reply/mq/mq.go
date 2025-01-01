@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/ac-dcz/lightRW/apps/review/mq/internal/config"
-	"github.com/ac-dcz/lightRW/apps/review/mq/internal/server"
-	"github.com/ac-dcz/lightRW/apps/review/mq/internal/svc"
+	"github.com/ac-dcz/lightRW/apps/reply/mq/internal/config"
+	"github.com/ac-dcz/lightRW/apps/reply/mq/internal/server"
+	"github.com/ac-dcz/lightRW/apps/reply/mq/internal/svc"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 )

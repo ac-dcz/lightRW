@@ -25,6 +25,8 @@ type (
 	ReplyBySSkuReq      = pb.ReplyBySSkuReq
 	ReplyBySSkuResp     = pb.ReplyBySSkuResp
 	ReplyInfo           = pb.ReplyInfo
+	UpdateStatusReq     = pb.UpdateStatusReq
+	UpdateStatusResp    = pb.UpdateStatusResp
 
 	Reply interface {
 		ProposeReply(ctx context.Context, in *ProposeReplyReq, opts ...grpc.CallOption) (*ProposeReplyResp, error)
@@ -32,6 +34,7 @@ type (
 		ReplyBySSku(ctx context.Context, in *ReplyBySSkuReq, opts ...grpc.CallOption) (*ReplyBySSkuResp, error)
 		ReplyByReviewId(ctx context.Context, in *ReplyByReviewIdReq, opts ...grpc.CallOption) (*ReplyByReviewIdResp, error)
 		ReplyByMid(ctx context.Context, in *ReplyByMidReq, opts ...grpc.CallOption) (*ReplyByMidResp, error)
+		UpdateStatus(ctx context.Context, in *UpdateStatusReq, opts ...grpc.CallOption) (*UpdateStatusResp, error)
 	}
 
 	defaultReply struct {
@@ -68,4 +71,9 @@ func (m *defaultReply) ReplyByReviewId(ctx context.Context, in *ReplyByReviewIdR
 func (m *defaultReply) ReplyByMid(ctx context.Context, in *ReplyByMidReq, opts ...grpc.CallOption) (*ReplyByMidResp, error) {
 	client := pb.NewReplyClient(m.cli.Conn())
 	return client.ReplyByMid(ctx, in, opts...)
+}
+
+func (m *defaultReply) UpdateStatus(ctx context.Context, in *UpdateStatusReq, opts ...grpc.CallOption) (*UpdateStatusResp, error) {
+	client := pb.NewReplyClient(m.cli.Conn())
+	return client.UpdateStatus(ctx, in, opts...)
 }

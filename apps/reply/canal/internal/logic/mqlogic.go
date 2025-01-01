@@ -2,7 +2,7 @@ package logic
 
 import (
 	"context"
-	"github.com/ac-dcz/lightRW/apps/review/canal/internal/svc"
+	"github.com/ac-dcz/lightRW/apps/reply/canal/internal/svc"
 	"github.com/ac-dcz/lightRW/common/canal"
 	"github.com/segmentio/kafka-go"
 	"github.com/zeromicro/go-zero/core/logx"

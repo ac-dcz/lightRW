@@ -29,7 +29,7 @@ func NewReplyBySSkuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reply
 
 func (l *ReplyBySSkuLogic) ReplyBySSku(in *pb.ReplyBySSkuReq) (*pb.ReplyBySSkuResp, error) {
 	replyList, err := l.svcCtx.ReplyModel.FindManyBySSku(l.ctx, in.StoreId, in.Sku)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || replyList == nil || len(replyList) == 0 {
 		return nil, errors.New(codes.NotFoundReply, err.Error())
 	} else if err != nil {
 		l.Errorf(err.Error())

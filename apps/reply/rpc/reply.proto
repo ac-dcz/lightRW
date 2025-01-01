@@ -67,10 +67,22 @@ message ReplyByMidResp{
   repeated ReplyInfo Infos = 1;
 }
 
+message UpdateStatusReq{
+  uint64 ReplyId = 1;
+  uint32 Status = 2;
+  string OpReason = 3;
+}
+
+message UpdateStatusResp{
+  uint64 ReplyId = 1;
+  uint32 Status = 2;
+}
+
 service Reply{
   rpc ProposeReply(ProposeReplyReq) returns(ProposeReplyResp);
   rpc ReplyByReplyId(ReplyByReplyIdReq) returns(ReplyByReplyIdResp);
   rpc ReplyBySSku(ReplyBySSkuReq) returns(ReplyBySSkuResp);
   rpc ReplyByReviewId(ReplyByReviewIdReq) returns(ReplyByReviewIdResp);
   rpc ReplyByMid(ReplyByMidReq) returns(ReplyByMidResp);
+  rpc UpdateStatus(UpdateStatusReq) returns(UpdateStatusResp);
 }

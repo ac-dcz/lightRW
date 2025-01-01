@@ -1,4 +1,4 @@
-ServiceName: canal-client
+ServiceName: reply-canal-client
 Encoding: plain
 Level: debug
 TimeFormat: 2006-01-02 15:04:05
@@ -7,11 +7,11 @@ CanalConf:
   Host: 127.0.0.1
   Port: 11111
   Destination: example
-  Subscribe: gozero_review\.review
+  Subscribe: gozero_review\.reply
   ClientId: 1004
 
 ReviewWriterConf:
   Brokers:
     - 127.0.0.1:9092
-  Topic: go_review_review_test
+  Topic: go_review_reply_test
 

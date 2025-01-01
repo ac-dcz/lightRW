@@ -1,7 +1,7 @@
 package svc
 
 import (
-	"github.com/ac-dcz/lightRW/apps/review/canal/internal/config"
+	"github.com/ac-dcz/lightRW/apps/reply/canal/internal/config"
 	"github.com/ac-dcz/lightRW/common/canal"
 	"github.com/ac-dcz/lightRW/common/mq"
 	"github.com/zeromicro/go-zero/core/logx"

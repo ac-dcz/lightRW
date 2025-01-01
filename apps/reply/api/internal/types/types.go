@@ -9,7 +9,7 @@ type ProposeReplyReq struct {
 	Sku      string `json:"sku" validate:"required`
 	Content  string `json:"content" validate:"required`
 	HasImage uint8  `json:"has_image" validate:"required`
-	ImageDSN string `json:"image_dsn" validate:"required`
+	ImageCDN string `json:"image_cdn optional"`
 }
 
 type ProposeReplyResp struct {

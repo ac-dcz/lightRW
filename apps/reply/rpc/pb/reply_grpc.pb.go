@@ -24,6 +24,7 @@ const (
 	Reply_ReplyBySSku_FullMethodName     = "/pb.Reply/ReplyBySSku"
 	Reply_ReplyByReviewId_FullMethodName = "/pb.Reply/ReplyByReviewId"
 	Reply_ReplyByMid_FullMethodName      = "/pb.Reply/ReplyByMid"
+	Reply_UpdateStatus_FullMethodName    = "/pb.Reply/UpdateStatus"
 )
 
 // ReplyClient is the client API for Reply service.
@@ -35,6 +36,7 @@ type ReplyClient interface {
 	ReplyBySSku(ctx context.Context, in *ReplyBySSkuReq, opts ...grpc.CallOption) (*ReplyBySSkuResp, error)
 	ReplyByReviewId(ctx context.Context, in *ReplyByReviewIdReq, opts ...grpc.CallOption) (*ReplyByReviewIdResp, error)
 	ReplyByMid(ctx context.Context, in *ReplyByMidReq, opts ...grpc.CallOption) (*ReplyByMidResp, error)
+	UpdateStatus(ctx context.Context, in *UpdateStatusReq, opts ...grpc.CallOption) (*UpdateStatusResp, error)
 }
 
 type replyClient struct {
@@ -95,6 +97,16 @@ func (c *replyClient) ReplyByMid(ctx context.Context, in *ReplyByMidReq, opts ..
 	return out, nil
 }
 
+func (c *replyClient) UpdateStatus(ctx context.Context, in *UpdateStatusReq, opts ...grpc.CallOption) (*UpdateStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateStatusResp)
+	err := c.cc.Invoke(ctx, Reply_UpdateStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReplyServer is the server API for Reply service.
 // All implementations must embed UnimplementedReplyServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type ReplyServer interface {
 	ReplyBySSku(context.Context, *ReplyBySSkuReq) (*ReplyBySSkuResp, error)
 	ReplyByReviewId(context.Context, *ReplyByReviewIdReq) (*ReplyByReviewIdResp, error)
 	ReplyByMid(context.Context, *ReplyByMidReq) (*ReplyByMidResp, error)
+	UpdateStatus(context.Context, *UpdateStatusReq) (*UpdateStatusResp, error)
 	mustEmbedUnimplementedReplyServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedReplyServer) ReplyByReviewId(context.Context, *ReplyByReviewI
 }
 func (UnimplementedReplyServer) ReplyByMid(context.Context, *ReplyByMidReq) (*ReplyByMidResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReplyByMid not implemented")
+}
+func (UnimplementedReplyServer) UpdateStatus(context.Context, *UpdateStatusReq) (*UpdateStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
 }
 func (UnimplementedReplyServer) mustEmbedUnimplementedReplyServer() {}
 func (UnimplementedReplyServer) testEmbeddedByValue()               {}
@@ -240,6 +256,24 @@ func _Reply_ReplyByMid_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Reply_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReplyServer).UpdateStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Reply_UpdateStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReplyServer).UpdateStatus(ctx, req.(*UpdateStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Reply_ServiceDesc is the grpc.ServiceDesc for Reply service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +300,10 @@ var Reply_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReplyByMid",
 			Handler:    _Reply_ReplyByMid_Handler,
+		},
+		{
+			MethodName: "UpdateStatus",
+			Handler:    _Reply_UpdateStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
