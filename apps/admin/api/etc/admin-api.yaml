@@ -2,6 +2,10 @@ Name: admin-api
 Host: 0.0.0.0
 Port: 9060
 
+Auth:
+  AccessSecret: "chaozhengding@hust.edu.cn"
+  AccessExpire: 3600
+
 ReplyEsConf:
   Addresses:
     - http://127.0.0.1:9200

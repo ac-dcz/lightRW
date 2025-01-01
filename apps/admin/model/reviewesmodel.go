@@ -80,8 +80,6 @@ func (m *defaultEsReviewModel) FindByUid(ctx context.Context, uid uint64, page, 
 				},
 			},
 		},
-		"from": (page - 1) * pageSize,
-		"size": pageSize,
 		"sort": []M{
 			{
 				"create_at": "desc",

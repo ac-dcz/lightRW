@@ -30,7 +30,8 @@ func NewReplyByMidLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ReplyB
 func (l *ReplyByMidLogic) ReplyByMid(in *pb.ReplyByMidReq) (*pb.ReplyByMidResp, error) {
 	replyList, err := l.svcCtx.ReplyModel.FindManyByMid(l.ctx, in.Mid)
 	if stderr.Is(err, model.ErrNotFound) || replyList == nil || len(replyList) == 0 {
-		return nil, errors.New(codes.NotFoundReply, err.Error())
+		l.Logger.Errorf("not found reply")
+		return nil, errors.New(codes.NotFoundReply, "not found reply")
 	} else if err != nil {
 		l.Errorf(err.Error())
 		return nil, errors.New(codes.InternalError, err.Error())

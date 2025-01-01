@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Reply_ProposeReply_FullMethodName    = "/pb.Reply/ProposeReply"
-	Reply_ReplyByReplyId_FullMethodName  = "/pb.Reply/ReplyByReplyId"
-	Reply_ReplyBySSku_FullMethodName     = "/pb.Reply/ReplyBySSku"
-	Reply_ReplyByReviewId_FullMethodName = "/pb.Reply/ReplyByReviewId"
-	Reply_ReplyByMid_FullMethodName      = "/pb.Reply/ReplyByMid"
-	Reply_UpdateStatus_FullMethodName    = "/pb.Reply/UpdateStatus"
+	Reply_ProposeReply_FullMethodName    = "/reply.Reply/ProposeReply"
+	Reply_ReplyByReplyId_FullMethodName  = "/reply.Reply/ReplyByReplyId"
+	Reply_ReplyBySSku_FullMethodName     = "/reply.Reply/ReplyBySSku"
+	Reply_ReplyByReviewId_FullMethodName = "/reply.Reply/ReplyByReviewId"
+	Reply_ReplyByMid_FullMethodName      = "/reply.Reply/ReplyByMid"
+	Reply_UpdateStatus_FullMethodName    = "/reply.Reply/UpdateStatus"
 )
 
 // ReplyClient is the client API for Reply service.
@@ -278,7 +278,7 @@ func _Reply_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Reply_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Reply",
+	ServiceName: "reply.Reply",
 	HandlerType: (*ReplyServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

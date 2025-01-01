@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GoodsRpc_RegistryGoods_FullMethodName = "/pb.GoodsRpc/RegistryGoods"
-	GoodsRpc_GoodsInfo_FullMethodName     = "/pb.GoodsRpc/GoodsInfo"
+	GoodsRpc_RegistryGoods_FullMethodName = "/goods.GoodsRpc/RegistryGoods"
+	GoodsRpc_GoodsInfo_FullMethodName     = "/goods.GoodsRpc/GoodsInfo"
 )
 
 // GoodsRpcClient is the client API for GoodsRpc service.
@@ -142,7 +142,7 @@ func _GoodsRpc_GoodsInfo_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GoodsRpc_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.GoodsRpc",
+	ServiceName: "goods.GoodsRpc",
 	HandlerType: (*GoodsRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -31,7 +31,7 @@ func (l *GetGoodsStockLogic) GetGoodsStock(in *pb.GoodsStockReq) (*pb.GoodsStock
 
 	if data, err := l.svcCtx.GoodsStoreModel.FindOneByStoreIdSku(l.ctx, in.StoreId, in.Sku); stderr.Is(err, gmodel.ErrNotFound) {
 		l.Logger.Errorf("find goods stock err: %v", err)
-		return nil, errors.New(codes.GoodsNotFound, err.Error())
+		return nil, errors.New(codes.GoodsNotFound, "goods not in store")
 	} else if err != nil {
 		l.Logger.Errorf("find goods stock err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())

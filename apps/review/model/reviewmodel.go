@@ -47,7 +47,7 @@ func (m *customReviewModel) FindManyByUid(ctx context.Context, uid uint64) ([]*R
 
 func (m *customReviewModel) FindManyBySSku(ctx context.Context, storeId uint64, sku string) ([]*Review, error) {
 	reviews := make([]*Review, 0)
-	query := fmt.Sprintf("select %s from %s where store_id = ? sku = ?", reviewRows, m.table)
+	query := fmt.Sprintf("select %s from %s where store_id = ? and sku = ?", reviewRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &reviews, query, storeId, sku); err != nil {
 		if stderr.Is(err, sqlc.ErrNotFound) {
 			return nil, ErrNotFound

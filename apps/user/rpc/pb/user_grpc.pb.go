@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserRpc_SignIn_FullMethodName = "/pb.UserRpc/SignIn"
-	UserRpc_SignUp_FullMethodName = "/pb.UserRpc/SignUp"
+	UserRpc_SignIn_FullMethodName = "/user.UserRpc/SignIn"
+	UserRpc_SignUp_FullMethodName = "/user.UserRpc/SignUp"
 )
 
 // UserRpcClient is the client API for UserRpc service.
@@ -142,7 +142,7 @@ func _UserRpc_SignUp_Handler(srv interface{}, ctx context.Context, dec func(inte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserRpc_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.UserRpc",
+	ServiceName: "user.UserRpc",
 	HandlerType: (*UserRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

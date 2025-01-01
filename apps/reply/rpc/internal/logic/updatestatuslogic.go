@@ -29,7 +29,7 @@ func (l *UpdateStatusLogic) UpdateStatus(in *pb.UpdateStatusReq) (*pb.UpdateStat
 
 	if err := l.svcCtx.ReplyModel.UpdateStatus(l.ctx, in.ReplyId, in.Status, in.OpReason); err != nil {
 		l.Logger.Errorf("update status err:%v", err)
-		return nil, errors.New(codes.InternalError, err.Error())
+		return nil, errors.New(codes.InternalError, "not found reply")
 	}
 
 	return &pb.UpdateStatusResp{

@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Review_ProposeReview_FullMethodName    = "/pb.Review/ProposeReview"
-	Review_ReviewByUid_FullMethodName      = "/pb.Review/ReviewByUid"
-	Review_ReviewBySSku_FullMethodName     = "/pb.Review/ReviewBySSku"
-	Review_ReviewByReviewId_FullMethodName = "/pb.Review/ReviewByReviewId"
-	Review_UpdateStatus_FullMethodName     = "/pb.Review/UpdateStatus"
+	Review_ProposeReview_FullMethodName    = "/review.Review/ProposeReview"
+	Review_ReviewByUid_FullMethodName      = "/review.Review/ReviewByUid"
+	Review_ReviewBySSku_FullMethodName     = "/review.Review/ReviewBySSku"
+	Review_ReviewByReviewId_FullMethodName = "/review.Review/ReviewByReviewId"
+	Review_UpdateStatus_FullMethodName     = "/review.Review/UpdateStatus"
 )
 
 // ReviewClient is the client API for Review service.
@@ -254,7 +254,7 @@ func _Review_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Review_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Review",
+	ServiceName: "review.Review",
 	HandlerType: (*ReviewServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

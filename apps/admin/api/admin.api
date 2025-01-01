@@ -10,7 +10,7 @@ info (
 
 type (
 	QueryParams {
-		Page int `json:"page,optional,default=0"`
+		Page int `json:"page,optional,default=1"`
 		Size int `json:"size,optional,default=10"`
 	}
 )
@@ -111,7 +111,7 @@ service admin-api {
 	get /ssku (ReplyBySSkuReq) returns (ReplyResp)
 
 	@handler ReplyByReplyId
-	get /reviewid (ReplyByReplyIdReq) returns (ReplyResp)
+	get /replyid (ReplyByReplyIdReq) returns (ReplyResp)
 
 	@handler ReplyByReviewId
 	get /reviewid (ReplyByReviewIdReq) returns (ReplyResp)

@@ -85,10 +85,14 @@ func ParseToReview(record *canal.Record) (string, map[string]any, error) {
 	for _, column := range record.AfterColumns {
 		data[column.Name] = column.Value
 		if column.Name == "id" {
-			if t, ok := column.Value.(int64); !ok {
-				return "", nil, errors.New("id type error")
+			if t, ok := column.Value.(float64); !ok {
+				if t, ok := column.Value.(string); !ok {
+					return "", nil, errors.New("id type error")
+				} else {
+					id = t
+				}
 			} else {
-				id = strconv.FormatInt(t, 10)
+				id = strconv.FormatInt(int64(t), 10)
 			}
 		}
 	}

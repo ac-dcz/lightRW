@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	VerifyCode_GenCode_FullMethodName    = "/pb.VerifyCode/GenCode"
-	VerifyCode_VerifyCode_FullMethodName = "/pb.VerifyCode/VerifyCode"
+	VerifyCode_GenCode_FullMethodName    = "/code.VerifyCode/GenCode"
+	VerifyCode_VerifyCode_FullMethodName = "/code.VerifyCode/VerifyCode"
 )
 
 // VerifyCodeClient is the client API for VerifyCode service.
@@ -142,7 +142,7 @@ func _VerifyCode_VerifyCode_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var VerifyCode_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.VerifyCode",
+	ServiceName: "code.VerifyCode",
 	HandlerType: (*VerifyCodeServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

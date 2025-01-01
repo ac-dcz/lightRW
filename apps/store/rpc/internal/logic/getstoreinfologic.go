@@ -34,7 +34,7 @@ func (l *GetStoreInfoLogic) GetStoreInfo(in *pb.StoreInfoReq) (*pb.StoreInfoResp
 	//Step1: find store
 	if data, err := l.svcCtx.StoreModel.FindOneByStoreId(l.ctx, in.StoreId); stderr.Is(err, model.ErrNotFound) {
 		l.Logger.Errorf("GetStoreInfoLogic.findOneByStoreId err: %v", err)
-		return nil, errors.New(codes.StoreNotRegistry, "store nor registry")
+		return nil, errors.New(codes.StoreNotRegistry, "store not registry")
 	} else if err != nil {
 		l.Logger.Errorf("GetStoreInfoLogic.findOneByStoreId err: %v", err)
 		return nil, errors.New(codes.InternalError, err.Error())

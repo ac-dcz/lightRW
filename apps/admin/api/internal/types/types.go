@@ -4,7 +4,7 @@
 package types
 
 type QueryParams struct {
-	Page int `json:"page,optional,default=0"`
+	Page int `json:"page,optional,default=1"`
 	Size int `json:"size,optional,default=10"`
 }
 
@@ -35,7 +35,7 @@ type ReplyBySSkuReq struct {
 }
 
 type ReplyResp struct {
-	Items []map[string]any `json:"items"`
+	Items []map[string]interface{} `json:"items"`
 }
 
 type ReviewByKeyReq struct {
@@ -60,7 +60,7 @@ type ReviewByUidReq struct {
 }
 
 type ReviewResp struct {
-	Items []map[string]any `json:"items"`
+	Items []map[string]interface{} `json:"items"`
 }
 
 type UpdateReplyReq struct {

@@ -23,7 +23,7 @@ func TestClient_Run(t *testing.T) {
 		Port:        11111,
 		Destination: "example",
 		Subscribe:   "gozero_review\\.review",
-		ClientId:    1001,
+		ClientId:    1005,
 	})
 	if err != nil {
 		t.Fatal(err)

@@ -19,10 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Store_RegistryStore_FullMethodName = "/pb.Store/RegistryStore"
-	Store_GetStoreInfo_FullMethodName  = "/pb.Store/GetStoreInfo"
-	Store_AddGoods_FullMethodName      = "/pb.Store/AddGoods"
-	Store_GetGoodsStock_FullMethodName = "/pb.Store/GetGoodsStock"
+	Store_RegistryStore_FullMethodName = "/store.Store/RegistryStore"
+	Store_GetStoreInfo_FullMethodName  = "/store.Store/GetStoreInfo"
+	Store_AddGoods_FullMethodName      = "/store.Store/AddGoods"
+	Store_GetGoodsStock_FullMethodName = "/store.Store/GetGoodsStock"
 )
 
 // StoreClient is the client API for Store service.
@@ -210,7 +210,7 @@ func _Store_GetGoodsStock_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Store_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Store",
+	ServiceName: "store.Store",
 	HandlerType: (*StoreServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

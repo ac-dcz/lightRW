@@ -28,7 +28,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/reviewid",
+				Path:    "/replyid",
 				Handler: reply.ReplyByReplyIdHandler(serverCtx),
 			},
 			{

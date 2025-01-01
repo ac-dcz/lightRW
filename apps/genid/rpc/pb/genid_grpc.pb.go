@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GenId_GetId_FullMethodName = "/pb.GenId/GetId"
+	GenId_GetId_FullMethodName = "/genid.GenId/GetId"
 )
 
 // GenIdClient is the client API for GenId service.
@@ -108,7 +108,7 @@ func _GenId_GetId_Handler(srv interface{}, ctx context.Context, dec func(interfa
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GenId_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.GenId",
+	ServiceName: "genid.GenId",
 	HandlerType: (*GenIdServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
