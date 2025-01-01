@@ -1,0 +1,24 @@
+Name: admin-api
+Host: 0.0.0.0
+Port: 9060
+
+ReplyEsConf:
+  Addresses:
+    - http://127.0.0.1:9200
+
+ReviewEsConf:
+  Addresses:
+    - http://127.0.0.1:9200
+
+ReviewRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: review.rpc
+
+
+ReplyRpcConf:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: reply.rpc

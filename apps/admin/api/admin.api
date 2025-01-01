@@ -1,0 +1,122 @@
+syntax = "v1"
+
+info (
+	title:   "admin api"
+	desc:    "admin api file"
+	author:  "dcz"
+	email:   "chaozhengding@hust.edu.cn"
+	version: "v1"
+)
+
+type (
+	QueryParams {
+		Page int `json:"page,optional,default=0"`
+		Size int `json:"size,optional,default=10"`
+	}
+)
+
+type (
+	ReviewByUidReq {
+		Uid uint64 `form:"uid" validate:"required"`
+		QueryParams
+	}
+	ReviewByKeyReq {
+		Key string `form:"key" validate:"required"`
+		QueryParams
+	}
+	ReviewBySSkuReq {
+		StoreId uint64 `form:"store_id" validate:"required"`
+		Sku     string `form:"sku" validate:"required"`
+		QueryParams
+	}
+	ReviewByReviewIdReq {
+		ReviewId uint64 `form:"review_id" validate:"required"`
+		QueryParams
+	}
+	ReviewResp  {}
+	UpdateReviewReq {
+		ReviewId uint64 `json:"review_id" validate:"required"`
+		Status   uint8  `json:"status" validate:"required"`
+		OpReason string `json:"op_reason,optional"`
+	}
+	UpdateReviewResp  {}
+)
+
+@server (
+	group:  review
+	prefix: /api/v1/admin/review
+	jwt:    Auth
+)
+service admin-api {
+	@handler ReviewByUid
+	get /uid (ReviewByUidReq) returns (ReviewResp)
+
+	@handler ReviewByKey
+	get /key (ReviewByKeyReq) returns (ReviewResp)
+
+	@handler ReviewBySSku
+	get /ssku (ReviewBySSkuReq) returns (ReviewResp)
+
+	@handler ReviewByReviewId
+	get /reviewid (ReviewByReviewIdReq) returns (ReviewResp)
+
+	@handler UpdateReview
+	post /update/status (UpdateReviewReq) returns (UpdateReviewResp)
+}
+
+type (
+	ReplyByMidReq {
+		Mid uint64 `form:"mid" validate:"required"`
+		QueryParams
+	}
+	ReplyByKeyReq {
+		Key string `form:"key" validate:"required"`
+		QueryParams
+	}
+	ReplyBySSkuReq {
+		StoreId uint64 `form:"store_id" validate:"required"`
+		Sku     string `form:"sku" validate:"required"`
+		QueryParams
+	}
+	ReplyByReplyIdReq {
+		ReplyId uint64 `form:"reply_id" validate:"required"`
+		QueryParams
+	}
+	ReplyByReviewIdReq {
+		ReviewId uint64 `form:"review_id" validate:"required"`
+		QueryParams
+	}
+	ReplyResp  {}
+	UpdateReplyReq {
+		ReplyId  uint64 `json:"review_id" validate:"required"`
+		Status   uint8  `json:"status" validate:"required"`
+		OpReason string `json:"op_reason,optional"`
+	}
+	UpdateReplyResp  {}
+)
+
+@server (
+	group:  reply
+	prefix: /api/v1/admin/reply
+	jwt:    Auth
+)
+service admin-api {
+	@handler ReplyByMid
+	get /mid (ReplyByMidReq) returns (ReplyResp)
+
+	@handler ReplyByKey
+	get /key (ReplyByKeyReq) returns (ReplyResp)
+
+	@handler ReplyBySSku
+	get /ssku (ReplyBySSkuReq) returns (ReplyResp)
+
+	@handler ReplyByReplyId
+	get /reviewid (ReplyByReplyIdReq) returns (ReplyResp)
+
+	@handler ReplyByReviewId
+	get /reviewid (ReplyByReviewIdReq) returns (ReplyResp)
+
+	@handler UpdateReply
+	post /update/status (UpdateReplyReq) returns (UpdateReplyResp)
+}
+

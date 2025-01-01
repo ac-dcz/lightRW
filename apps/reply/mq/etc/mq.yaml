@@ -1,0 +1,16 @@
+ServiceName: mq-client
+Encoding: plain
+Level: debug
+TimeFormat: 2006-01-02 15:04:05
+
+
+ReaderReviewConf:
+  Brokers:
+    - 127.0.0.1:9092
+  Topics:
+    - go_review_review_test
+  GroupId: go_review_review_c4
+
+EsClientConf:
+  Addresses:
+    - http://127.0.0.1:9200
