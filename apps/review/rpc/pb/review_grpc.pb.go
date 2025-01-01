@@ -23,20 +23,23 @@ const (
 	Review_ReviewByUid_FullMethodName      = "/pb.Review/ReviewByUid"
 	Review_ReviewBySSku_FullMethodName     = "/pb.Review/ReviewBySSku"
 	Review_ReviewByReviewId_FullMethodName = "/pb.Review/ReviewByReviewId"
+	Review_UpdateStatus_FullMethodName     = "/pb.Review/UpdateStatus"
 )
 
 // ReviewClient is the client API for Review service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReviewClient interface {
-	// 发表评论
+	// ProposeReview 发表评论
 	ProposeReview(ctx context.Context, in *ProposeReviewReq, opts ...grpc.CallOption) (*ProposeReviewResp, error)
-	// 查找某一用户的评论
+	// ReviewByUid 查找某一用户的评论
 	ReviewByUid(ctx context.Context, in *ReviewByUidReq, opts ...grpc.CallOption) (*ReviewByUidResp, error)
-	// 查找某一款商品的评论
+	// ReviewBySSku( 查找某一款商品的评论
 	ReviewBySSku(ctx context.Context, in *ReviewBySSkuReq, opts ...grpc.CallOption) (*ReviewBySSkuResp, error)
-	// 查找某一条评论的信息
+	// ReviewByReviewId 查找某一条评论的信息
 	ReviewByReviewId(ctx context.Context, in *ReviewByReviewIdReq, opts ...grpc.CallOption) (*ReviewByReviewIdResp, error)
+	// UpdateStatus 更新review status
+	UpdateStatus(ctx context.Context, in *UpdateStatusReq, opts ...grpc.CallOption) (*UpdateStatusResp, error)
 }
 
 type reviewClient struct {
@@ -87,18 +90,30 @@ func (c *reviewClient) ReviewByReviewId(ctx context.Context, in *ReviewByReviewI
 	return out, nil
 }
 
+func (c *reviewClient) UpdateStatus(ctx context.Context, in *UpdateStatusReq, opts ...grpc.CallOption) (*UpdateStatusResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateStatusResp)
+	err := c.cc.Invoke(ctx, Review_UpdateStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReviewServer is the server API for Review service.
 // All implementations must embed UnimplementedReviewServer
 // for forward compatibility.
 type ReviewServer interface {
-	// 发表评论
+	// ProposeReview 发表评论
 	ProposeReview(context.Context, *ProposeReviewReq) (*ProposeReviewResp, error)
-	// 查找某一用户的评论
+	// ReviewByUid 查找某一用户的评论
 	ReviewByUid(context.Context, *ReviewByUidReq) (*ReviewByUidResp, error)
-	// 查找某一款商品的评论
+	// ReviewBySSku( 查找某一款商品的评论
 	ReviewBySSku(context.Context, *ReviewBySSkuReq) (*ReviewBySSkuResp, error)
-	// 查找某一条评论的信息
+	// ReviewByReviewId 查找某一条评论的信息
 	ReviewByReviewId(context.Context, *ReviewByReviewIdReq) (*ReviewByReviewIdResp, error)
+	// UpdateStatus 更新review status
+	UpdateStatus(context.Context, *UpdateStatusReq) (*UpdateStatusResp, error)
 	mustEmbedUnimplementedReviewServer()
 }
 
@@ -120,6 +135,9 @@ func (UnimplementedReviewServer) ReviewBySSku(context.Context, *ReviewBySSkuReq)
 }
 func (UnimplementedReviewServer) ReviewByReviewId(context.Context, *ReviewByReviewIdReq) (*ReviewByReviewIdResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReviewByReviewId not implemented")
+}
+func (UnimplementedReviewServer) UpdateStatus(context.Context, *UpdateStatusReq) (*UpdateStatusResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStatus not implemented")
 }
 func (UnimplementedReviewServer) mustEmbedUnimplementedReviewServer() {}
 func (UnimplementedReviewServer) testEmbeddedByValue()                {}
@@ -214,6 +232,24 @@ func _Review_ReviewByReviewId_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Review_UpdateStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStatusReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReviewServer).UpdateStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Review_UpdateStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReviewServer).UpdateStatus(ctx, req.(*UpdateStatusReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Review_ServiceDesc is the grpc.ServiceDesc for Review service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -236,6 +272,10 @@ var Review_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ReviewByReviewId",
 			Handler:    _Review_ReviewByReviewId_Handler,
+		},
+		{
+			MethodName: "UpdateStatus",
+			Handler:    _Review_UpdateStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

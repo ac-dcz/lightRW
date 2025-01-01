@@ -31,7 +31,7 @@ func NewReviewByReviewIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 func (l *ReviewByReviewIdLogic) ReviewByReviewId(in *pb.ReviewByReviewIdReq) (*pb.ReviewByReviewIdResp, error) {
 
 	info, err := l.svcCtx.ReviewModel.FindOneByReviewId(l.ctx, in.ReviewId)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || info == nil {
 		return nil, errors.New(codes.NotFoundReview, "not found review")
 	}
 	if err != nil {

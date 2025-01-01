@@ -1,9 +1,10 @@
 package svc
 
 import (
-	"github.com/ac-dcz/lightRW/apps/admin/canal/internal/config"
+	"github.com/ac-dcz/lightRW/apps/review/canal/internal/config"
 	"github.com/ac-dcz/lightRW/common/canal"
 	"github.com/ac-dcz/lightRW/common/mq"
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ServiceContext struct {
@@ -14,6 +15,7 @@ type ServiceContext struct {
 
 func NewServiceContext(config config.Config) (*ServiceContext, error) {
 	cli, err := canal.NewClient(&config.CanalConf)
+	logx.Debug(config.CanalConf)
 	if err != nil {
 		return nil, err
 	}

@@ -69,14 +69,27 @@ message ReviewByReviewIdResp{
   ReviewInfo Info = 1;
 }
 
+message UpdateStatusReq{
+  uint64 ReviewId = 1;
+  uint32 Status = 2;
+  string OpReason = 3;
+}
+
+message UpdateStatusResp{
+  uint64 ReviewId = 1;
+  uint32 Status = 2;
+}
+
 service Review{
-  //发表评论
+  // ProposeReview 发表评论
   rpc ProposeReview(ProposeReviewReq) returns(ProposeReviewResp);
-  //查找某一用户的评论
+  // ReviewByUid 查找某一用户的评论
   rpc ReviewByUid(ReviewByUidReq) returns(ReviewByUidResp);
-  //查找某一款商品的评论
+  // ReviewBySSku( 查找某一款商品的评论
   rpc ReviewBySSku(ReviewBySSkuReq) returns(ReviewBySSkuResp);
-  //查找某一条评论的信息
+  // ReviewByReviewId 查找某一条评论的信息
   rpc ReviewByReviewId(ReviewByReviewIdReq) returns(ReviewByReviewIdResp);
+  // UpdateStatus 更新review status
+  rpc UpdateStatus(UpdateStatusReq) returns(UpdateStatusResp);
 }
 

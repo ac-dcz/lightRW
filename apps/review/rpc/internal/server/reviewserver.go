@@ -23,26 +23,32 @@ func NewReviewServer(svcCtx *svc.ServiceContext) *ReviewServer {
 	}
 }
 
-// 发表评论
+// ProposeReview 发表评论
 func (s *ReviewServer) ProposeReview(ctx context.Context, in *pb.ProposeReviewReq) (*pb.ProposeReviewResp, error) {
 	l := logic.NewProposeReviewLogic(ctx, s.svcCtx)
 	return l.ProposeReview(in)
 }
 
-// 查找某一用户的评论
+// ReviewByUid 查找某一用户的评论
 func (s *ReviewServer) ReviewByUid(ctx context.Context, in *pb.ReviewByUidReq) (*pb.ReviewByUidResp, error) {
 	l := logic.NewReviewByUidLogic(ctx, s.svcCtx)
 	return l.ReviewByUid(in)
 }
 
-// 查找某一款商品的评论
+// ReviewBySSku( 查找某一款商品的评论
 func (s *ReviewServer) ReviewBySSku(ctx context.Context, in *pb.ReviewBySSkuReq) (*pb.ReviewBySSkuResp, error) {
 	l := logic.NewReviewBySSkuLogic(ctx, s.svcCtx)
 	return l.ReviewBySSku(in)
 }
 
-// 查找某一条评论的信息
+// ReviewByReviewId 查找某一条评论的信息
 func (s *ReviewServer) ReviewByReviewId(ctx context.Context, in *pb.ReviewByReviewIdReq) (*pb.ReviewByReviewIdResp, error) {
 	l := logic.NewReviewByReviewIdLogic(ctx, s.svcCtx)
 	return l.ReviewByReviewId(in)
+}
+
+// UpdateStatus 更新review status
+func (s *ReviewServer) UpdateStatus(ctx context.Context, in *pb.UpdateStatusReq) (*pb.UpdateStatusResp, error) {
+	l := logic.NewUpdateStatusLogic(ctx, s.svcCtx)
+	return l.UpdateStatus(in)
 }

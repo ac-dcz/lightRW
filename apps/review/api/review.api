@@ -30,9 +30,9 @@ type (
 		StoreId    uint64 `json:"store_id" validate:"required"`
 		Sku        string `json:"sku" validate:"required"`
 		Level      uint8  `json:"level,range=[1,3]" validate:"required"`
-		GoodsDesc  string `json:"goodsDesc" validate:"required"`
+		GoodsDesc  string `json:"goods_desc" validate:"required"`
 		HasImage   bool   `json:"has_image"`
-		ImageCDN   string `json:"image_cdn"`
+		ImageCDN   string `json:"image_cdn optional"`
 		StoreScore uint8  `json:"store_score,range=[1,5]" validate:"required"`
 	}
 	ProposeReviewResp {

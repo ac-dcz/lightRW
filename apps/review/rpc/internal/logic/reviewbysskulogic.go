@@ -31,7 +31,7 @@ func NewReviewBySSkuLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Revi
 func (l *ReviewBySSkuLogic) ReviewBySSku(in *pb.ReviewBySSkuReq) (*pb.ReviewBySSkuResp, error) {
 
 	datas, err := l.svcCtx.ReviewModel.FindManyBySSku(l.ctx, in.StoreId, in.Sku)
-	if stderr.Is(err, model.ErrNotFound) {
+	if stderr.Is(err, model.ErrNotFound) || datas == nil || len(datas) == 0 {
 		return nil, errors.New(codes.NotFoundReview, "not found review")
 	} else if err != nil {
 		l.Errorf("FindManyBySSku err: %v", err)

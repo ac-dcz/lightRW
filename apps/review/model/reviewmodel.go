@@ -2,10 +2,10 @@ package model
 
 import (
 	"context"
-	"database/sql"
 	stderr "errors"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -18,6 +18,7 @@ type (
 		reviewModel
 		FindManyByUid(ctx context.Context, uid uint64) ([]*Review, error)
 		FindManyBySSku(ctx context.Context, storeId uint64, sku string) ([]*Review, error)
+		UpdateStatus(ctx context.Context, reviewId uint64, status uint32, opReason string) error
 	}
 
 	customReviewModel struct {
@@ -36,7 +37,7 @@ func (m *customReviewModel) FindManyByUid(ctx context.Context, uid uint64) ([]*R
 	reviews := make([]*Review, 0)
 	query := fmt.Sprintf("select %s from %s where uid = ?", reviewRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &reviews, query, uid); err != nil {
-		if stderr.Is(err, sql.ErrNoRows) {
+		if stderr.Is(err, sqlc.ErrNotFound) {
 			return nil, ErrNotFound
 		}
 		return nil, err
@@ -48,10 +49,19 @@ func (m *customReviewModel) FindManyBySSku(ctx context.Context, storeId uint64, 
 	reviews := make([]*Review, 0)
 	query := fmt.Sprintf("select %s from %s where store_id = ? sku = ?", reviewRows, m.table)
 	if err := m.QueryRowsNoCacheCtx(ctx, &reviews, query, storeId, sku); err != nil {
-		if stderr.Is(err, sql.ErrNoRows) {
+		if stderr.Is(err, sqlc.ErrNotFound) {
 			return nil, ErrNotFound
 		}
 		return nil, err
 	}
 	return reviews, nil
+}
+
+func (m *customReviewModel) UpdateStatus(ctx context.Context, reviewId uint64, status uint32, opReason string) error {
+	query := fmt.Sprintf("update %s set status = ? and op_reason = ? where review_id = ?", m.table)
+	if _, err := m.CachedConn.ExecNoCacheCtx(ctx, query, status, opReason, reviewId); err != nil {
+		return err
+	} else {
+		return nil
+	}
 }
